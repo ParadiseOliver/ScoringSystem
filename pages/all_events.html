@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scoring System</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> </head>
+
+</head>
+<body>
+    <header>
+        <h1><a href="/">Tramp Score</a></h1>
+    </header>
+    <h2>All Events</h2>
+    <div class="events">
+        {{ range .}}
+        <div id="{{ .Id }}"><a href="">  
+            <h5>{{ .Name }}</h5>
+            <img>
+            <h6>{{ .Start_date }} to {{ .End_date}}</h6>
+        </div></a>
+        {{ end }}
+    </div>
+    
+</body>
+</html>
