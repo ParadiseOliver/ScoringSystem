@@ -33,6 +33,19 @@ type Event struct {
 	EndDate   string `json:"enddate"`
 }
 
+type Result struct {
+	Id       string `json:"id"`
+	Athlete  string `json:"athlete"`
+	Club     string `json:"club"`
+	Agegroup string `json:"agegroup"`
+	Category string `json:"category"`
+	Score    string `json:"score"`
+}
+
+func init() {
+	config.LoadEnvVariables()
+}
+
 func getEvents(c *gin.Context) {
 	var Events []Event
 
@@ -123,8 +136,77 @@ func createEvent(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newEvent)
 }
 
-func init() {
-	config.LoadEnvVariables()
+func resultById(c *gin.Context) {
+	eventId := c.Param("eventId")
+	eventId = "res_" + eventId
+	resId := c.Param("resultId")
+	result, err := getResultById(eventId, resId)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, result)
+}
+
+func getResultById(eventId string, resultId string) (*Result, error) {
+
+	var result Result
+
+	db, err := config.Connectdb()
+
+	if err != nil {
+		panic(err)
+	}
+
+	sql := "SELECT id, athlete_id, club_id, agegroup, category, score FROM " + eventId + " WHERE id = '" + resultId + "'"
+
+	if err = db.QueryRow(sql).Scan(&result.Id, &result.Athlete, &result.Club, &result.Agegroup, &result.Category, &result.Score); err != nil {
+		return nil, errors.New("Event not found")
+	}
+
+	return &result, nil
+}
+
+func resultsByEventId(c *gin.Context) {
+	eventId := c.Param("eventId")
+	eventId = "res_" + eventId
+	results, err := getResultsByEventId(eventId)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, results)
+}
+
+func getResultsByEventId(eventId string) ([]Result, error) {
+
+	var results []Result
+
+	db, err := config.Connectdb()
+
+	if err != nil {
+		panic(err)
+	}
+
+	sql := "SELECT id, athlete_id, club_id, agegroup, category, score FROM " + eventId
+	res, err := db.Query(sql)
+
+	if err != nil {
+		return nil, errors.New("Event not found")
+	}
+
+	for res.Next() {
+		var result Result
+		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Agegroup, &result.Category, &result.Score); err != nil {
+			panic(err)
+		}
+
+		results = append(results, result)
+	}
+
+	return results, nil
 }
 
 func main() {
@@ -136,6 +218,9 @@ func main() {
 	r.GET("/events", getEvents)
 	r.GET("/events/:id", eventById)
 	r.POST("/events", createEvent)
+
+	r.GET("/results/:eventId", resultsByEventId)
+	r.GET("/results/:eventId/:resultId", resultById)
 
 	port, err := config.MyPort()
 
