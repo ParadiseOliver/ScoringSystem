@@ -37,7 +37,6 @@ type Result struct {
 	Id       string `json:"id"`
 	Athlete  string `json:"athlete"`
 	Club     string `json:"club"`
-	Agegroup string `json:"agegroup"`
 	Category string `json:"category"`
 	Score    string `json:"score"`
 }
@@ -78,7 +77,7 @@ func getEvents(c *gin.Context) {
 }
 
 func eventById(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("eventId")
 	event, err := getEventById(id)
 
 	if err != nil {
@@ -136,42 +135,10 @@ func createEvent(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newEvent)
 }
 
-func resultById(c *gin.Context) {
+func allResultsByEventId(c *gin.Context) {
 	eventId := c.Param("eventId")
-	eventId = "res_" + eventId
-	resId := c.Param("resultId")
-	result, err := getResultById(eventId, resId)
-
-	if err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
-		return
-	}
-	c.IndentedJSON(http.StatusOK, result)
-}
-
-func getResultById(eventId string, resultId string) (*Result, error) {
-
-	var result Result
-
-	db, err := config.Connectdb()
-
-	if err != nil {
-		panic(err)
-	}
-
-	sql := "SELECT id, athlete_id, club_id, agegroup, category, score FROM " + eventId + " WHERE id = '" + resultId + "'"
-
-	if err = db.QueryRow(sql).Scan(&result.Id, &result.Athlete, &result.Club, &result.Agegroup, &result.Category, &result.Score); err != nil {
-		return nil, errors.New("Event not found")
-	}
-
-	return &result, nil
-}
-
-func resultsByEventId(c *gin.Context) {
-	eventId := c.Param("eventId")
-	eventId = "res_" + eventId
-	results, err := getResultsByEventId(eventId)
+	eventId = "results_" + eventId
+	results, err := getAllResultsByEventId(eventId)
 
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
@@ -180,7 +147,7 @@ func resultsByEventId(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, results)
 }
 
-func getResultsByEventId(eventId string) ([]Result, error) {
+func getAllResultsByEventId(eventId string) ([]Result, error) {
 
 	var results []Result
 
@@ -194,12 +161,87 @@ func getResultsByEventId(eventId string) ([]Result, error) {
 	res, err := db.Query(sql)
 
 	if err != nil {
+		return nil, errors.New("results not found")
+	}
+
+	for res.Next() {
+		var result Result
+		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Score); err != nil {
+			panic(err)
+		}
+
+		results = append(results, result)
+	}
+
+	return results, nil
+}
+
+func resultByResultId(c *gin.Context) {
+	eventId := c.Param("eventId")
+	eventId = "results_" + eventId
+	resId := c.Param("resultId")
+	result, err := getResultByResultId(eventId, resId)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, result)
+}
+
+func getResultByResultId(eventId string, resultId string) (*Result, error) {
+
+	var result Result
+
+	db, err := config.Connectdb()
+
+	if err != nil {
+		panic(err)
+	}
+
+	sql := "SELECT id, athlete_id, club_id, agegroup, category, score FROM " + eventId + " WHERE id = '" + resultId + "'"
+
+	if err = db.QueryRow(sql).Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Score); err != nil {
+		return nil, errors.New("event not found")
+	}
+
+	return &result, nil
+}
+
+func resultsByAthleteId(c *gin.Context) {
+	eventId := c.Param("eventId")
+	eventId = "results_" + eventId
+	athleteId := c.Param("athleteId")
+	log.Print(eventId, athleteId)
+	results, err := getResultsByAthleteId(eventId, athleteId)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
+		return
+	}
+	c.IndentedJSON(http.StatusOK, results)
+}
+
+func getResultsByAthleteId(eventId string, athleteId string) ([]Result, error) {
+
+	var results []Result
+
+	db, err := config.Connectdb()
+
+	if err != nil {
+		panic(err)
+	}
+
+	sql := "SELECT id, athlete_id, club_id, agegroup, category, score FROM " + eventId + " WHERE athlete_id = '" + athleteId + "'"
+	res, err := db.Query(sql)
+
+	if err != nil {
 		return nil, errors.New("Event not found")
 	}
 
 	for res.Next() {
 		var result Result
-		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Agegroup, &result.Category, &result.Score); err != nil {
+		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Score); err != nil {
 			panic(err)
 		}
 
@@ -215,12 +257,22 @@ func main() {
 	//r := gin.New()
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
 
-	r.GET("/events", getEvents)
-	r.GET("/events/:id", eventById)
-	r.POST("/events", createEvent)
+	v1 := r.Group("/api/v1")
+	{
+		events := v1.Group("/events")
+		{
+			events.GET("/", getEvents)
+			events.POST("/", createEvent)
+			events.GET("/:eventId", eventById)
 
-	r.GET("/results/:eventId", resultsByEventId)
-	r.GET("/results/:eventId/:resultId", resultById)
+			events.GET("/:eventId/results", allResultsByEventId)
+			events.GET("/:eventId/results/:resultId", resultByResultId)
+			events.GET("/:eventId/results/athlete/:athleteId", resultsByAthleteId)
+		}
+	}
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(404, gin.H{"message": "Not found"})
+	})
 
 	port, err := config.MyPort()
 
