@@ -20,28 +20,6 @@ var (
 	eventController delivery.EventController = delivery.New(eventService)
 )
 
-type User struct {
-	Id        string `json:"id"`
-	FirstName string `json:"firstname"`
-	Surname   string `json:"surname"`
-	Club      string `json:"club"`
-	User_type string `json:"userType"`
-}
-
-type Club struct {
-	Id        string `json:"id"`
-	Name      string `json:"name"`
-	Headcoach string `json:"headcoach"`
-}
-
-type Result struct {
-	Id       string `json:"id"`
-	Athlete  string `json:"athlete"`
-	Club     string `json:"club"`
-	Category string `json:"category"`
-	Score    string `json:"score"`
-}
-
 func init() {
 	config.LoadEnvVariables()
 }
@@ -148,9 +126,9 @@ func allResultsByEventId(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, results)
 }
 
-func getAllResultsByEventId(eventId string) ([]Result, error) {
+func getAllResultsByEventId(eventId string) ([]entity.Result, error) {
 
-	var results []Result
+	var results []entity.Result
 
 	db, err := config.Connectdb()
 
@@ -166,7 +144,7 @@ func getAllResultsByEventId(eventId string) ([]Result, error) {
 	}
 
 	for res.Next() {
-		var result Result
+		var result entity.Result
 		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Score); err != nil {
 			panic(err)
 		}
@@ -190,9 +168,9 @@ func resultByResultId(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, result)
 }
 
-func getResultByResultId(eventId string, resultId string) (*Result, error) {
+func getResultByResultId(eventId string, resultId string) (*entity.Result, error) {
 
-	var result Result
+	var result entity.Result
 
 	db, err := config.Connectdb()
 
@@ -223,9 +201,9 @@ func resultsByAthleteId(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, results)
 }
 
-func getResultsByAthleteId(eventId string, athleteId string) ([]Result, error) {
+func getResultsByAthleteId(eventId string, athleteId string) ([]entity.Result, error) {
 
-	var results []Result
+	var results []entity.Result
 
 	db, err := config.Connectdb()
 
@@ -241,7 +219,7 @@ func getResultsByAthleteId(eventId string, athleteId string) ([]Result, error) {
 	}
 
 	for res.Next() {
-		var result Result
+		var result entity.Result
 		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Score); err != nil {
 			panic(err)
 		}
