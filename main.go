@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/ParadiseOliver/ScoringSystem/config"
-	"github.com/ParadiseOliver/ScoringSystem/domain"
+	"github.com/ParadiseOliver/ScoringSystem/delivery"
 	"github.com/ParadiseOliver/ScoringSystem/entity"
 	"github.com/ParadiseOliver/ScoringSystem/usecases"
 
@@ -16,8 +16,8 @@ import (
 )
 
 var (
-	eventService    usecases.EventService  = usecases.New()
-	eventController domain.EventController = domain.New(eventService)
+	eventService    usecases.EventService    = usecases.New()
+	eventController delivery.EventController = delivery.New(eventService)
 )
 
 type User struct {
