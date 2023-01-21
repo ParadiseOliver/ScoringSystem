@@ -76,7 +76,7 @@ func getEventById(id string) (*entity.Event, error) {
 	}
 
 	if err = db.QueryRow("SELECT id, name, start_date, end_date FROM events WHERE ID = ?", id).Scan(&event.Id, &event.Name, &event.StartDate, &event.EndDate); err != nil {
-		return nil, errors.New("Event not found")
+		return nil, errors.New("event not found")
 	}
 
 	return &event, nil
@@ -249,6 +249,12 @@ func main() {
 			events.GET("/:eventId/results/athlete/:athleteId", resultsByAthleteId)
 		}
 	}
+	r.GET("/test", func(c *gin.Context) {
+		c.JSON(200, eventController.GetAll())
+	})
+	r.POST("/test", func(c *gin.Context) {
+		c.JSON(200, eventController.Create(c))
+	})
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"message": "Not found"})
 	})

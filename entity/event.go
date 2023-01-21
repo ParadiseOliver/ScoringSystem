@@ -6,4 +6,6 @@ type Event struct {
 	StartDate   string   `json:"startdate"`
 	EndDate     string   `json:"enddate"`
 	Disciplines []string `json:"disciplines"`
+	Categories  []string `json:"categories"`
+	Agegroups   []string `json:"agegroups"`
 }
