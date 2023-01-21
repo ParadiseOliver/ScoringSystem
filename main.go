@@ -215,7 +215,7 @@ func getResultsByAthleteId(eventId string, athleteId string) ([]entity.Result, e
 	res, err := db.Query(sql)
 
 	if err != nil {
-		return nil, errors.New("Event not found")
+		return nil, errors.New("event not found")
 	}
 
 	for res.Next() {
