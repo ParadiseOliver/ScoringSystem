@@ -7,9 +7,17 @@ import (
 	"strconv"
 
 	"github.com/ParadiseOliver/ScoringSystem/config"
+	"github.com/ParadiseOliver/ScoringSystem/domain"
+	"github.com/ParadiseOliver/ScoringSystem/entity"
+	"github.com/ParadiseOliver/ScoringSystem/usecases"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+)
+
+var (
+	eventService    usecases.EventService  = usecases.New()
+	eventController domain.EventController = domain.New(eventService)
 )
 
 type User struct {
@@ -26,13 +34,6 @@ type Club struct {
 	Headcoach string `json:"headcoach"`
 }
 
-type Event struct {
-	Id        string `json:"id"`
-	Name      string `json:"name"`
-	StartDate string `json:"startdate"`
-	EndDate   string `json:"enddate"`
-}
-
 type Result struct {
 	Id       string `json:"id"`
 	Athlete  string `json:"athlete"`
@@ -46,7 +47,7 @@ func init() {
 }
 
 func getEvents(c *gin.Context) {
-	var Events []Event
+	var Events []entity.Event
 
 	db, err := config.Connectdb()
 
@@ -64,7 +65,7 @@ func getEvents(c *gin.Context) {
 
 	for res.Next() {
 
-		var event Event
+		var event entity.Event
 
 		if err = res.Scan(&event.Id, &event.Name, &event.StartDate, &event.EndDate); err != nil {
 			log.Fatal(err)
@@ -87,8 +88,8 @@ func eventById(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, event)
 }
 
-func getEventById(id string) (*Event, error) {
-	var event Event
+func getEventById(id string) (*entity.Event, error) {
+	var event entity.Event
 
 	db, err := config.Connectdb()
 
@@ -104,7 +105,7 @@ func getEventById(id string) (*Event, error) {
 }
 
 func createEvent(c *gin.Context) {
-	var newEvent Event
+	var newEvent entity.Event
 
 	db, err := config.Connectdb()
 
