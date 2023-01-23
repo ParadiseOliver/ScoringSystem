@@ -104,7 +104,7 @@ func createEvent(c *gin.Context) {
 		return
 	}
 
-	sql := "INSERT INTO events (name, start_date, end_date) VALUES ('" + newEvent.Name + "', '" + newEvent.StartDate.String() + "', '" + newEvent.EndDate.String() + "')"
+	sql := "INSERT INTO events (name, start_date, end_date) VALUES ('" + newEvent.Name + "', '" + newEvent.StartDate + "', '" + newEvent.EndDate + "')"
 	res, err := db.Exec(sql)
 
 	if err != nil {
@@ -246,6 +246,7 @@ func main() {
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
 	//r.Use(gin.Recovery(), gin.Logger(), gindump.Dump())
 
+	r.Static("/css", "./templates/css")
 	r.LoadHTMLGlob("templates/*.html")
 
 	r.Use(gin.Recovery(), gin.Logger())
@@ -275,6 +276,12 @@ func main() {
 		}
 
 	})
+
+	pages := r.Group("/pages")
+	{
+		pages.GET("/events", eventController.AllEvents)
+	}
+
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"message": "Not found"})
 	})

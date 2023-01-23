@@ -5,9 +5,9 @@ import "time"
 type Event struct {
 	Id             string          `json:"id" binding:"required"`
 	Name           string          `json:"name" binding:"required"`
-	StartDate      time.Time       `json:"start_date" time_format:"02-01-2006"`
-	EndDate        time.Time       `json:"end_date" validate:"is-after"`
-	EntryDeadline  time.Time       `json:"entry_deadline" binding:"gtfield=StartDate" time_format:"02-01-2006 03:04.05"`
+	StartDate      string          `json:"start_date"`
+	EndDate        string          `json:"end_date"`
+	EntryDeadline  time.Time       `json:"entry_deadline"`
 	IsPrivate      bool            `json:"is_private"`
 	Disciplines    []string        `json:"disciplines"`
 	Categories     []string        `json:"categories"`

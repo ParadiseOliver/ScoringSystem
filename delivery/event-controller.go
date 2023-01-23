@@ -1,6 +1,8 @@
 package delivery
 
 import (
+	"net/http"
+
 	"github.com/ParadiseOliver/ScoringSystem/entity"
 	"github.com/ParadiseOliver/ScoringSystem/usecases"
 	"github.com/ParadiseOliver/ScoringSystem/validators"
@@ -11,6 +13,7 @@ import (
 type EventController interface {
 	GetAll() []entity.Event
 	Create(ctx *gin.Context) error
+	AllEvents(ctx *gin.Context)
 }
 
 type controller struct {
@@ -43,4 +46,13 @@ func (c *controller) Create(ctx *gin.Context) error {
 
 func (c *controller) GetAll() []entity.Event {
 	return c.service.GetAll()
+}
+
+func (c *controller) AllEvents(ctx *gin.Context) {
+	events := c.service.GetAll()
+	data := gin.H{
+		"title":  "Scoring System",
+		"events": events,
+	}
+	ctx.HTML(http.StatusOK, "all_events.html", data)
 }
