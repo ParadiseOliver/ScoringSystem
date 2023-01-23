@@ -2,8 +2,10 @@ package main
 
 import (
 	"errors"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/ParadiseOliver/ScoringSystem/config"
@@ -13,6 +15,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	//gindump "github.com/tpkeeper/gin-dump"
 )
 
 var (
@@ -22,6 +25,11 @@ var (
 
 func init() {
 	config.LoadEnvVariables()
+}
+
+func setupLogOutput() {
+	f, _ := os.Create("gin.log")
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 }
 
 func getEvents(c *gin.Context) {
@@ -96,7 +104,7 @@ func createEvent(c *gin.Context) {
 		return
 	}
 
-	sql := "INSERT INTO events (name, start_date, end_date) VALUES ('" + newEvent.Name + "', '" + newEvent.StartDate + "', '" + newEvent.EndDate + "')"
+	sql := "INSERT INTO events (name, start_date, end_date) VALUES ('" + newEvent.Name + "', '" + newEvent.StartDate.String() + "', '" + newEvent.EndDate.String() + "')"
 	res, err := db.Exec(sql)
 
 	if err != nil {
@@ -232,9 +240,15 @@ func getResultsByAthleteId(eventId string, athleteId string) ([]entity.Result, e
 
 func main() {
 
-	r := gin.Default()
-	//r := gin.New()
+	setupLogOutput()
+	//r := gin.Default()
+	r := gin.New()
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
+	//r.Use(gin.Recovery(), gin.Logger(), gindump.Dump())
+
+	r.LoadHTMLGlob("templates/*.html")
+
+	r.Use(gin.Recovery(), gin.Logger())
 
 	v1 := r.Group("/api/v1")
 	{
@@ -253,7 +267,13 @@ func main() {
 		c.JSON(200, eventController.GetAll())
 	})
 	r.POST("/test", func(c *gin.Context) {
-		c.JSON(200, eventController.Create(c))
+		err := eventController.Create(c)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		} else {
+			c.JSON(http.StatusOK, gin.H{"message": "video input is valid"})
+		}
+
 	})
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"message": "Not found"})
