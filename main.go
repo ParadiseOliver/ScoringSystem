@@ -9,8 +9,9 @@ import (
 	"strconv"
 
 	"github.com/ParadiseOliver/ScoringSystem/config"
-	"github.com/ParadiseOliver/ScoringSystem/delivery"
+	"github.com/ParadiseOliver/ScoringSystem/controllers"
 	"github.com/ParadiseOliver/ScoringSystem/entity"
+	"github.com/ParadiseOliver/ScoringSystem/repository"
 	"github.com/ParadiseOliver/ScoringSystem/usecases"
 
 	"github.com/gin-gonic/gin"
@@ -19,8 +20,9 @@ import (
 )
 
 var (
-	eventService    usecases.EventService    = usecases.New()
-	eventController delivery.EventController = delivery.New(eventService)
+	eventRepo       repository.EventRepository  = repository.NewMySQLRepository()
+	eventService    usecases.EventService       = usecases.New(eventRepo)
+	eventController controllers.EventController = controllers.New(eventService)
 )
 
 func init() {
@@ -265,16 +267,20 @@ func main() {
 		}
 	}
 	r.GET("/test", func(c *gin.Context) {
-		c.JSON(200, eventController.GetAll())
-	})
-	r.POST("/test", func(c *gin.Context) {
-		err := eventController.Create(c)
+		events, err := eventController.GetAll()
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		} else {
-			c.JSON(http.StatusOK, gin.H{"message": "video input is valid"})
+			c.JSON(http.StatusOK, events)
 		}
-
+	})
+	r.POST("/test", func(c *gin.Context) {
+		event, err := eventController.Create(c)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		} else {
+			c.JSON(http.StatusOK, event)
+		}
 	})
 
 	pages := r.Group("/pages")

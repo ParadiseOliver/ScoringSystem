@@ -1,4 +1,4 @@
-package delivery
+package controllers
 
 import (
 	"net/http"
@@ -11,8 +11,8 @@ import (
 )
 
 type EventController interface {
-	GetAll() []entity.Event
-	Create(ctx *gin.Context) error
+	GetAll() ([]entity.Event, error)
+	Create(ctx *gin.Context) (entity.Event, error)
 	AllEvents(ctx *gin.Context)
 }
 
@@ -20,7 +20,9 @@ type controller struct {
 	service usecases.EventService
 }
 
-var validate *validator.Validate
+var (
+	validate *validator.Validate
+)
 
 func New(service usecases.EventService) EventController {
 	validate = validator.New()
@@ -30,26 +32,29 @@ func New(service usecases.EventService) EventController {
 	}
 }
 
-func (c *controller) Create(ctx *gin.Context) error {
+func (c *controller) Create(ctx *gin.Context) (entity.Event, error) {
 	var event entity.Event
 	err := ctx.ShouldBindJSON(&event)
 	if err != nil {
-		return err
+		return entity.Event{}, err
 	}
 	err = validate.Struct(event)
 	if err != nil {
-		return err
+		return entity.Event{}, err
 	}
 	c.service.Create(event)
-	return nil
+	return event, nil
 }
 
-func (c *controller) GetAll() []entity.Event {
+func (c *controller) GetAll() ([]entity.Event, error) {
 	return c.service.GetAll()
 }
 
 func (c *controller) AllEvents(ctx *gin.Context) {
-	events := c.service.GetAll()
+	events, err := c.service.GetAll()
+	if err != nil {
+		panic(err)
+	}
 	data := gin.H{
 		"title":  "Scoring System",
 		"events": events,

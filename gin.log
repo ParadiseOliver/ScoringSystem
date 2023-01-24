@@ -22,9 +22,8 @@
 [GIN-debug] GET    /api/v1/events/:eventId/results/athlete/:athleteId --> main.resultsByAthleteId (3 handlers)
 [GIN-debug] GET    /test                     --> main.main.func1 (3 handlers)
 [GIN-debug] POST   /test                     --> main.main.func2 (3 handlers)
-[GIN-debug] GET    /pages/events             --> github.com/ParadiseOliver/ScoringSystem/delivery.EventController.AllEvents-fm (3 handlers)
+[GIN-debug] GET    /pages/events             --> github.com/ParadiseOliver/ScoringSystem/controllers.EventController.AllEvents-fm (3 handlers)
 [GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
 Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
 [GIN-debug] Listening and serving HTTP on :8080
-[GIN] 2023/01/23 - 15:29:48 | 200 |         256µs |             ::1 | POST     "/test"
-[GIN] 2023/01/23 - 15:30:13 | 200 |      2.1834ms |             ::1 | GET      "/pages/events"
+[GIN] 2023/01/24 - 23:14:06 | 200 |     19.3506ms |             ::1 | GET      "/test"
