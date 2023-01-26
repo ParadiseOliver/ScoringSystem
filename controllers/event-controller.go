@@ -12,8 +12,8 @@ import (
 )
 
 type EventController interface {
-	GetAll() ([]entity.Event, error)
-	CreateEvent(ctx *gin.Context) (*entity.Event, error)
+	GetAll(ctx *gin.Context)
+	CreateEvent(ctx *gin.Context)
 	AllEvents(ctx *gin.Context)
 }
 
@@ -33,25 +33,29 @@ func New(service usecases.EventService) EventController {
 	}
 }
 
-func (c *controller) CreateEvent(ctx *gin.Context) (*entity.Event, error) {
+func (c *controller) CreateEvent(ctx *gin.Context) {
 	var event *entity.Event
 	err := ctx.ShouldBindJSON(&event)
 	if err != nil {
-		return &entity.Event{}, err
+		log.Fatal(err)
 	}
 	err = validate.Struct(event)
 	if err != nil {
-		return &entity.Event{}, err
+		log.Fatal(err)
 	}
 	event, err = c.service.CreateEvent(event)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return event, nil
+	ctx.IndentedJSON(http.StatusOK, event)
 }
 
-func (c *controller) GetAll() ([]entity.Event, error) {
-	return c.service.GetAll()
+func (c *controller) GetAll(ctx *gin.Context) {
+	events, err := c.service.GetAll()
+	if err != nil {
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	}
+	ctx.IndentedJSON(http.StatusOK, events)
 }
 
 func (c *controller) AllEvents(ctx *gin.Context) {

@@ -179,7 +179,7 @@ func getResultsByAthleteId(eventId string, athleteId string) ([]entity.Result, e
 func main() {
 
 	setupLogOutput()
-	//r := gin.Default()
+
 	r := gin.New()
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
 	//r.Use(gin.Recovery(), gin.Logger(), gindump.Dump())
@@ -193,22 +193,8 @@ func main() {
 	{
 		events := v1.Group("/events")
 		{
-			events.GET("/", func(c *gin.Context) {
-				events, err := eventController.GetAll()
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				} else {
-					c.JSON(http.StatusOK, events)
-				}
-			})
-			events.POST("/", func(c *gin.Context) {
-				event, err := eventController.CreateEvent(c)
-				if err != nil {
-					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-				} else {
-					c.JSON(http.StatusOK, event)
-				}
-			})
+			events.GET("/", eventController.GetAll)
+			events.POST("/", eventController.CreateEvent)
 			events.GET("/:eventId", eventById)
 
 			events.GET("/:eventId/results", allResultsByEventId)
