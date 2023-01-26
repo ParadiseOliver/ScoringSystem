@@ -3,7 +3,7 @@ package entity
 import "time"
 
 type Event struct {
-	Id             string          `json:"id" binding:"required"`
+	Id             string          `json:"id"`
 	Name           string          `json:"name" binding:"required"`
 	StartDate      string          `json:"start_date"`
 	EndDate        string          `json:"end_date"`

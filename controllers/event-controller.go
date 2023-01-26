@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/ParadiseOliver/ScoringSystem/entity"
@@ -12,7 +13,7 @@ import (
 
 type EventController interface {
 	GetAll() ([]entity.Event, error)
-	Create(ctx *gin.Context) (entity.Event, error)
+	Create(ctx *gin.Context) (*entity.Event, error)
 	AllEvents(ctx *gin.Context)
 }
 
@@ -32,17 +33,20 @@ func New(service usecases.EventService) EventController {
 	}
 }
 
-func (c *controller) Create(ctx *gin.Context) (entity.Event, error) {
-	var event entity.Event
+func (c *controller) Create(ctx *gin.Context) (*entity.Event, error) {
+	var event *entity.Event
 	err := ctx.ShouldBindJSON(&event)
 	if err != nil {
-		return entity.Event{}, err
+		return &entity.Event{}, err
 	}
 	err = validate.Struct(event)
 	if err != nil {
-		return entity.Event{}, err
+		return &entity.Event{}, err
 	}
-	c.service.Create(event)
+	event, err = c.service.Create(event)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return event, nil
 }
 

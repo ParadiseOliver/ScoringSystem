@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 
 	"github.com/ParadiseOliver/ScoringSystem/config"
 	"github.com/ParadiseOliver/ScoringSystem/controllers"
@@ -34,37 +33,6 @@ func setupLogOutput() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 }
 
-/* func getEvents(c *gin.Context) {
-	var Events []entity.Event
-
-	db, err := config.Connectdb()
-
-	if err != nil {
-		panic(err)
-	}
-
-	res, err := db.Query("SELECT * FROM events")
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer res.Close()
-
-	for res.Next() {
-
-		var event entity.Event
-
-		if err = res.Scan(&event.Id, &event.Name, &event.StartDate, &event.EndDate); err != nil {
-			log.Fatal(err)
-		}
-
-		Events = append(Events, event)
-	}
-
-	c.IndentedJSON(http.StatusOK, Events)
-} */
-
 func eventById(c *gin.Context) {
 	id := c.Param("eventId")
 	event, err := getEventById(id)
@@ -90,38 +58,6 @@ func getEventById(id string) (*entity.Event, error) {
 	}
 
 	return &event, nil
-}
-
-func createEvent(c *gin.Context) {
-	var newEvent entity.Event
-
-	db, err := config.Connectdb()
-
-	if err != nil {
-		panic(err)
-	}
-
-	if err := c.ShouldBindJSON(&newEvent); err != nil {
-		log.Print(err)
-		return
-	}
-
-	sql := "INSERT INTO events (name, start_date, end_date) VALUES ('" + newEvent.Name + "', '" + newEvent.StartDate + "', '" + newEvent.EndDate + "')"
-	res, err := db.Exec(sql)
-
-	if err != nil {
-		panic(err.Error())
-	}
-
-	lastId, err := res.LastInsertId()
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	newEvent.Id = strconv.Itoa(int(lastId))
-
-	c.IndentedJSON(http.StatusCreated, newEvent)
 }
 
 func allResultsByEventId(c *gin.Context) {
@@ -265,7 +201,14 @@ func main() {
 					c.JSON(http.StatusOK, events)
 				}
 			})
-			events.POST("/", createEvent)
+			events.POST("/", func(c *gin.Context) {
+				event, err := eventController.Create(c)
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				} else {
+					c.JSON(http.StatusOK, event)
+				}
+			})
 			events.GET("/:eventId", eventById)
 
 			events.GET("/:eventId/results", allResultsByEventId)

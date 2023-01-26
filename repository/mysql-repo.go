@@ -1,11 +1,18 @@
 package repository
 
 import (
+	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/ParadiseOliver/ScoringSystem/config"
 	"github.com/ParadiseOliver/ScoringSystem/entity"
 )
+
+type EventRepository interface {
+	FindAll() ([]entity.Event, error)
+	Save(*entity.Event) (*entity.Event, error)
+}
 
 type repo struct{}
 
@@ -13,16 +20,12 @@ func NewMySQLRepository() EventRepository {
 	return &repo{}
 }
 
-type EventRepository interface {
-	FindAll() ([]entity.Event, error)
-}
-
 func (*repo) FindAll() ([]entity.Event, error) {
 
 	db, err := config.Connectdb()
 
 	if err != nil {
-		log.Fatalf("Failed to create a MySQL Client: %v", err)
+		log.Fatalf("Failed to create a DB Connection: %v", err)
 		return nil, err
 	}
 
@@ -37,7 +40,7 @@ func (*repo) FindAll() ([]entity.Event, error) {
 	}
 
 	defer res.Close()
-	log.Print("1")
+
 	for res.Next() {
 
 		var event entity.Event
@@ -48,6 +51,34 @@ func (*repo) FindAll() ([]entity.Event, error) {
 
 		events = append(events, event)
 	}
-	log.Print("2")
 	return events, nil
+}
+
+func (*repo) Save(event *entity.Event) (*entity.Event, error) {
+
+	db, err := config.Connectdb()
+
+	if err != nil {
+		log.Fatalf("Failed to create a DB Connection: %v", err)
+		return nil, err
+	}
+
+	defer db.Close()
+
+	sql := fmt.Sprintf("INSERT INTO events (name) VALUES ('%s')", event.Name)
+	res, err := db.Exec(sql)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	lastId, err := res.LastInsertId()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	event.Id = strconv.Itoa(int(lastId))
+
+	return event, nil
 }
