@@ -34,7 +34,7 @@ func setupLogOutput() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 }
 
-func getEvents(c *gin.Context) {
+/* func getEvents(c *gin.Context) {
 	var Events []entity.Event
 
 	db, err := config.Connectdb()
@@ -63,7 +63,7 @@ func getEvents(c *gin.Context) {
 	}
 
 	c.IndentedJSON(http.StatusOK, Events)
-}
+} */
 
 func eventById(c *gin.Context) {
 	id := c.Param("eventId")
@@ -257,7 +257,14 @@ func main() {
 	{
 		events := v1.Group("/events")
 		{
-			events.GET("/", getEvents)
+			events.GET("/", func(c *gin.Context) {
+				events, err := eventController.GetAll()
+				if err != nil {
+					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				} else {
+					c.JSON(http.StatusOK, events)
+				}
+			})
 			events.POST("/", createEvent)
 			events.GET("/:eventId", eventById)
 
