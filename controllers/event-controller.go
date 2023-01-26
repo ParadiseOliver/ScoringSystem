@@ -13,7 +13,7 @@ import (
 
 type EventController interface {
 	GetAll() ([]entity.Event, error)
-	Create(ctx *gin.Context) (*entity.Event, error)
+	CreateEvent(ctx *gin.Context) (*entity.Event, error)
 	AllEvents(ctx *gin.Context)
 }
 
@@ -33,7 +33,7 @@ func New(service usecases.EventService) EventController {
 	}
 }
 
-func (c *controller) Create(ctx *gin.Context) (*entity.Event, error) {
+func (c *controller) CreateEvent(ctx *gin.Context) (*entity.Event, error) {
 	var event *entity.Event
 	err := ctx.ShouldBindJSON(&event)
 	if err != nil {
@@ -43,7 +43,7 @@ func (c *controller) Create(ctx *gin.Context) (*entity.Event, error) {
 	if err != nil {
 		return &entity.Event{}, err
 	}
-	event, err = c.service.Create(event)
+	event, err = c.service.CreateEvent(event)
 	if err != nil {
 		log.Fatal(err)
 	}

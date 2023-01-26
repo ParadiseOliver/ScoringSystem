@@ -202,7 +202,7 @@ func main() {
 				}
 			})
 			events.POST("/", func(c *gin.Context) {
-				event, err := eventController.Create(c)
+				event, err := eventController.CreateEvent(c)
 				if err != nil {
 					c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 				} else {
@@ -216,22 +216,6 @@ func main() {
 			events.GET("/:eventId/results/athlete/:athleteId", resultsByAthleteId)
 		}
 	}
-	r.GET("/test", func(c *gin.Context) {
-		events, err := eventController.GetAll()
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		} else {
-			c.JSON(http.StatusOK, events)
-		}
-	})
-	r.POST("/test", func(c *gin.Context) {
-		event, err := eventController.Create(c)
-		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		} else {
-			c.JSON(http.StatusOK, event)
-		}
-	})
 
 	pages := r.Group("/pages")
 	{

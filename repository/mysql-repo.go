@@ -11,7 +11,7 @@ import (
 
 type EventRepository interface {
 	FindAll() ([]entity.Event, error)
-	Save(*entity.Event) (*entity.Event, error)
+	CreateEvent(*entity.Event) (*entity.Event, error)
 }
 
 type repo struct{}
@@ -54,7 +54,7 @@ func (*repo) FindAll() ([]entity.Event, error) {
 	return events, nil
 }
 
-func (*repo) Save(event *entity.Event) (*entity.Event, error) {
+func (*repo) CreateEvent(event *entity.Event) (*entity.Event, error) {
 
 	db, err := config.Connectdb()
 
