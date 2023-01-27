@@ -15,6 +15,7 @@ type EventService interface {
 	GetEventById(string) (*entity.Event, error)
 	AllResultsByEventId(string) ([]entity.Result, error)
 	ResultByResultId(string) (*entity.Result, error)
+	ResultsByAthleteId(id string) ([]entity.Result, error)
 }
 
 type eventService struct{}
@@ -42,4 +43,8 @@ func (service *eventService) AllResultsByEventId(id string) ([]entity.Result, er
 
 func (service *eventService) ResultByResultId(id string) (*entity.Result, error) {
 	return repo.ResultByResultId(id)
+}
+
+func (service *eventService) ResultsByAthleteId(id string) ([]entity.Result, error) {
+	return repo.ResultsByAthleteId(id)
 }

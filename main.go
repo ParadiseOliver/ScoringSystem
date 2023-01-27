@@ -1,15 +1,12 @@
 package main
 
 import (
-	"errors"
 	"io"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/ParadiseOliver/ScoringSystem/config"
 	"github.com/ParadiseOliver/ScoringSystem/controllers"
-	"github.com/ParadiseOliver/ScoringSystem/entity"
 	"github.com/ParadiseOliver/ScoringSystem/repository"
 	"github.com/ParadiseOliver/ScoringSystem/usecases"
 
@@ -33,7 +30,7 @@ func setupLogOutput() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 }
 
-func resultsByAthleteId(c *gin.Context) {
+/* func resultsByAthleteId(c *gin.Context) {
 	eventId := c.Param("eventId")
 	eventId = "results_" + eventId
 	athleteId := c.Param("athleteId")
@@ -45,9 +42,9 @@ func resultsByAthleteId(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(http.StatusOK, results)
-}
+} */
 
-func getResultsByAthleteId(eventId string, athleteId string) ([]entity.Result, error) {
+/* func getResultsByAthleteId(eventId string, athleteId string) ([]entity.Result, error) {
 
 	var results []entity.Result
 
@@ -74,7 +71,7 @@ func getResultsByAthleteId(eventId string, athleteId string) ([]entity.Result, e
 	}
 
 	return results, nil
-}
+} */
 
 func main() {
 
@@ -99,7 +96,7 @@ func main() {
 
 			events.GET("/result/:resultId", eventController.ResultByResultId)
 			events.GET("/results/:eventId", eventController.AllResultsByEventId)
-			events.GET("/results/:eventId/athlete/:athleteId", resultsByAthleteId)
+			events.GET("/athlete/:athleteId/results", eventController.ResultsByAthleteId)
 		}
 	}
 

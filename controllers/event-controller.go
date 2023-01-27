@@ -18,6 +18,7 @@ type EventController interface {
 	GetEventById(ctx *gin.Context)
 	AllResultsByEventId(ctx *gin.Context)
 	ResultByResultId(ctx *gin.Context)
+	ResultsByAthleteId(ctx *gin.Context)
 }
 
 type controller struct {
@@ -102,4 +103,15 @@ func (c *controller) ResultByResultId(ctx *gin.Context) {
 		return
 	}
 	ctx.IndentedJSON(http.StatusOK, result)
+}
+
+func (c *controller) ResultsByAthleteId(ctx *gin.Context) {
+	athleteId := ctx.Param("athleteId")
+	results, err := c.service.ResultsByAthleteId(athleteId)
+
+	if err != nil {
+		ctx.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
+		return
+	}
+	ctx.IndentedJSON(http.StatusOK, results)
 }

@@ -16,6 +16,7 @@ type EventRepository interface {
 	EventById(string) (*entity.Event, error)
 	AllResultsByEventId(string) ([]entity.Result, error)
 	ResultByResultId(string) (*entity.Result, error)
+	ResultsByAthleteId(string) ([]entity.Result, error)
 }
 
 type repo struct{}
@@ -106,14 +107,14 @@ func (*repo) EventById(id string) (*entity.Event, error) {
 
 func (*repo) AllResultsByEventId(id string) ([]entity.Result, error) {
 
-	var results []entity.Result
-
 	db, err := config.Connectdb()
 
 	if err != nil {
 		log.Fatalf("Failed to create a DB Connection: %v", err)
 		return nil, err
 	}
+
+	var results []entity.Result
 
 	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE event_id = '%s'", id)
 	res, err := db.Query(sql)
@@ -136,14 +137,14 @@ func (*repo) AllResultsByEventId(id string) ([]entity.Result, error) {
 
 func (*repo) ResultByResultId(id string) (*entity.Result, error) {
 
-	var result entity.Result
-
 	db, err := config.Connectdb()
 
 	if err != nil {
 		log.Fatalf("Failed to create a DB Connection: %v", err)
 		return nil, err
 	}
+
+	var result entity.Result
 
 	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE id='%s'", id)
 
@@ -152,4 +153,33 @@ func (*repo) ResultByResultId(id string) (*entity.Result, error) {
 	}
 
 	return &result, nil
+}
+
+func (*repo) ResultsByAthleteId(id string) ([]entity.Result, error) {
+
+	db, err := config.Connectdb()
+
+	if err != nil {
+		panic(err)
+	}
+
+	var results []entity.Result
+
+	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE athlete_id = '%s'", id)
+	res, err := db.Query(sql)
+
+	if err != nil {
+		return nil, errors.New("event not found")
+	}
+
+	for res.Next() {
+		var result entity.Result
+		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
+			panic(err)
+		}
+
+		results = append(results, result)
+	}
+
+	return results, nil
 }
