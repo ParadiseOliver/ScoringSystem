@@ -5,5 +5,6 @@ type Result struct {
 	Athlete  string `json:"athlete"`
 	Club     string `json:"club"`
 	Category string `json:"category"`
+	Agegroup string `json:"agegroup"`
 	Score    string `json:"score"`
 }

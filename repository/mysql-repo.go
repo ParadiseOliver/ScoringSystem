@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"strconv"
@@ -13,6 +14,7 @@ type EventRepository interface {
 	FindAll() ([]entity.Event, error)
 	CreateEvent(*entity.Event) (*entity.Event, error)
 	EventById(string) (*entity.Event, error)
+	AllResultsByEventId(string) ([]entity.Result, error)
 }
 
 type repo struct{}
@@ -99,4 +101,34 @@ func (*repo) EventById(id string) (*entity.Event, error) {
 	}
 
 	return &event, nil
+}
+
+func (*repo) AllResultsByEventId(id string) ([]entity.Result, error) {
+
+	var results []entity.Result
+
+	db, err := config.Connectdb()
+
+	if err != nil {
+		log.Fatalf("Failed to create a DB Connection: %v", err)
+		return nil, err
+	}
+
+	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE id = '%s'", id)
+	res, err := db.Query(sql)
+
+	if err != nil {
+		return nil, errors.New("results not found")
+	}
+
+	for res.Next() {
+		var result entity.Result
+		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
+			panic(err.Error())
+		}
+
+		results = append(results, result)
+	}
+
+	return results, nil
 }

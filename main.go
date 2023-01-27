@@ -33,7 +33,7 @@ func setupLogOutput() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 }
 
-func allResultsByEventId(c *gin.Context) {
+/* func allResultsByEventId(c *gin.Context) {
 	eventId := c.Param("eventId")
 	eventId = "results_" + eventId
 	results, err := getAllResultsByEventId(eventId)
@@ -43,9 +43,9 @@ func allResultsByEventId(c *gin.Context) {
 		return
 	}
 	c.IndentedJSON(http.StatusOK, results)
-}
+} */
 
-func getAllResultsByEventId(eventId string) ([]entity.Result, error) {
+/* func getAllResultsByEventId(eventId string) ([]entity.Result, error) {
 
 	var results []entity.Result
 
@@ -72,7 +72,7 @@ func getAllResultsByEventId(eventId string) ([]entity.Result, error) {
 	}
 
 	return results, nil
-}
+} */
 
 func resultByResultId(c *gin.Context) {
 	eventId := c.Param("eventId")
@@ -170,7 +170,7 @@ func main() {
 			events.POST("/", eventController.CreateEvent)
 			events.GET("/:eventId", eventController.GetEventById)
 
-			events.GET("/:eventId/results", allResultsByEventId)
+			events.GET("/:eventId/results", eventController.AllResultsByEventId)
 			events.GET("/:eventId/results/:resultId", resultByResultId)
 			events.GET("/:eventId/results/athlete/:athleteId", resultsByAthleteId)
 		}
