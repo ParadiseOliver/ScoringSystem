@@ -17,6 +17,7 @@ type EventController interface {
 	AllEvents(ctx *gin.Context)
 	GetEventById(ctx *gin.Context)
 	AllResultsByEventId(ctx *gin.Context)
+	ResultByResultId(ctx *gin.Context)
 }
 
 type controller struct {
@@ -90,4 +91,15 @@ func (c *controller) AllResultsByEventId(ctx *gin.Context) {
 		return
 	}
 	ctx.IndentedJSON(http.StatusOK, results)
+}
+
+func (c *controller) ResultByResultId(ctx *gin.Context) {
+	id := ctx.Param("resultId")
+	result, err := c.service.ResultByResultId(id)
+
+	if err != nil {
+		ctx.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
+		return
+	}
+	ctx.IndentedJSON(http.StatusOK, result)
 }

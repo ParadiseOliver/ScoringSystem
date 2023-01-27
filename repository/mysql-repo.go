@@ -15,6 +15,7 @@ type EventRepository interface {
 	CreateEvent(*entity.Event) (*entity.Event, error)
 	EventById(string) (*entity.Event, error)
 	AllResultsByEventId(string) ([]entity.Result, error)
+	ResultByResultId(string) (*entity.Result, error)
 }
 
 type repo struct{}
@@ -114,7 +115,7 @@ func (*repo) AllResultsByEventId(id string) ([]entity.Result, error) {
 		return nil, err
 	}
 
-	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE id = '%s'", id)
+	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE event_id = '%s'", id)
 	res, err := db.Query(sql)
 
 	if err != nil {
@@ -131,4 +132,24 @@ func (*repo) AllResultsByEventId(id string) ([]entity.Result, error) {
 	}
 
 	return results, nil
+}
+
+func (*repo) ResultByResultId(id string) (*entity.Result, error) {
+
+	var result entity.Result
+
+	db, err := config.Connectdb()
+
+	if err != nil {
+		log.Fatalf("Failed to create a DB Connection: %v", err)
+		return nil, err
+	}
+
+	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE id='%s'", id)
+
+	if err = db.QueryRow(sql).Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
+		return nil, errors.New("event not found")
+	}
+
+	return &result, nil
 }

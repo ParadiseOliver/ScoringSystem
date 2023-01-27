@@ -33,79 +33,6 @@ func setupLogOutput() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 }
 
-/* func allResultsByEventId(c *gin.Context) {
-	eventId := c.Param("eventId")
-	eventId = "results_" + eventId
-	results, err := getAllResultsByEventId(eventId)
-
-	if err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
-		return
-	}
-	c.IndentedJSON(http.StatusOK, results)
-} */
-
-/* func getAllResultsByEventId(eventId string) ([]entity.Result, error) {
-
-	var results []entity.Result
-
-	db, err := config.Connectdb()
-
-	if err != nil {
-		panic(err)
-	}
-
-	sql := "SELECT id, athlete_id, club_id, agegroup, category, score FROM " + eventId
-	res, err := db.Query(sql)
-
-	if err != nil {
-		return nil, errors.New("results not found")
-	}
-
-	for res.Next() {
-		var result entity.Result
-		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Score); err != nil {
-			panic(err)
-		}
-
-		results = append(results, result)
-	}
-
-	return results, nil
-} */
-
-func resultByResultId(c *gin.Context) {
-	eventId := c.Param("eventId")
-	eventId = "results_" + eventId
-	resId := c.Param("resultId")
-	result, err := getResultByResultId(eventId, resId)
-
-	if err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
-		return
-	}
-	c.IndentedJSON(http.StatusOK, result)
-}
-
-func getResultByResultId(eventId string, resultId string) (*entity.Result, error) {
-
-	var result entity.Result
-
-	db, err := config.Connectdb()
-
-	if err != nil {
-		panic(err)
-	}
-
-	sql := "SELECT id, athlete_id, club_id, agegroup, category, score FROM " + eventId + " WHERE id = '" + resultId + "'"
-
-	if err = db.QueryRow(sql).Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Score); err != nil {
-		return nil, errors.New("event not found")
-	}
-
-	return &result, nil
-}
-
 func resultsByAthleteId(c *gin.Context) {
 	eventId := c.Param("eventId")
 	eventId = "results_" + eventId
@@ -170,9 +97,9 @@ func main() {
 			events.POST("/", eventController.CreateEvent)
 			events.GET("/:eventId", eventController.GetEventById)
 
-			events.GET("/:eventId/results", eventController.AllResultsByEventId)
-			events.GET("/:eventId/results/:resultId", resultByResultId)
-			events.GET("/:eventId/results/athlete/:athleteId", resultsByAthleteId)
+			events.GET("/result/:resultId", eventController.ResultByResultId)
+			events.GET("/results/:eventId", eventController.AllResultsByEventId)
+			events.GET("/results/:eventId/athlete/:athleteId", resultsByAthleteId)
 		}
 	}
 
