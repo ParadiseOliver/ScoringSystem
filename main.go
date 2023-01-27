@@ -33,33 +33,6 @@ func setupLogOutput() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 }
 
-func eventById(c *gin.Context) {
-	id := c.Param("eventId")
-	event, err := getEventById(id)
-
-	if err != nil {
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Event not found"})
-		return
-	}
-	c.IndentedJSON(http.StatusOK, event)
-}
-
-func getEventById(id string) (*entity.Event, error) {
-	var event entity.Event
-
-	db, err := config.Connectdb()
-
-	if err != nil {
-		panic(err)
-	}
-
-	if err = db.QueryRow("SELECT id, name, start_date, end_date FROM events WHERE ID = ?", id).Scan(&event.Id, &event.Name, &event.StartDate, &event.EndDate); err != nil {
-		return nil, errors.New("event not found")
-	}
-
-	return &event, nil
-}
-
 func allResultsByEventId(c *gin.Context) {
 	eventId := c.Param("eventId")
 	eventId = "results_" + eventId
@@ -195,7 +168,7 @@ func main() {
 		{
 			events.GET("/", eventController.GetAll)
 			events.POST("/", eventController.CreateEvent)
-			events.GET("/:eventId", eventById)
+			events.GET("/:eventId", eventController.GetEventById)
 
 			events.GET("/:eventId/results", allResultsByEventId)
 			events.GET("/:eventId/results/:resultId", resultByResultId)

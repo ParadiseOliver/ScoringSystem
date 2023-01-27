@@ -12,6 +12,7 @@ import (
 type EventRepository interface {
 	FindAll() ([]entity.Event, error)
 	CreateEvent(*entity.Event) (*entity.Event, error)
+	EventById(string) (*entity.Event, error)
 }
 
 type repo struct{}
@@ -81,4 +82,21 @@ func (*repo) CreateEvent(event *entity.Event) (*entity.Event, error) {
 	event.Id = strconv.Itoa(int(lastId))
 
 	return event, nil
+}
+
+func (*repo) EventById(id string) (*entity.Event, error) {
+	db, err := config.Connectdb()
+
+	if err != nil {
+		log.Fatalf("Failed to create a DB Connection: %v", err)
+		return nil, err
+	}
+
+	var event entity.Event
+
+	if err = db.QueryRow("SELECT id, name, is_private FROM events WHERE ID = ?", id).Scan(&event.Id, &event.Name, &event.IsPrivate); err != nil {
+		return nil, err
+	}
+
+	return &event, nil
 }
