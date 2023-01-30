@@ -5,21 +5,21 @@ import (
 )
 
 type EventService interface { // TODO: Move me to transport layer (currently main)
-	CreateEvent(*entity.Event) (*entity.Event, error)
 	GetAll() ([]entity.Event, error)
-	GetEventById(string) (*entity.Event, error)
-	AllResultsByEventId(string) ([]entity.Result, error)
-	ResultByResultId(string) (*entity.Result, error)
-	ResultsByAthleteId(string) ([]entity.Result, error)
+	CreateEvent(event *entity.Event) (*entity.Event, error)
+	GetEventById(id string) (*entity.Event, error)
+	AllResultsByEventId(id string) ([]entity.Result, error)
+	ResultByResultId(id string) (*entity.Result, error)
+	ResultsByAthleteId(id string) ([]entity.Result, error)
 }
 
 type EventRepository interface {
 	FindAll() ([]entity.Event, error)
-	CreateEvent(*entity.Event) (*entity.Event, error)
-	EventById(string) (*entity.Event, error)
-	AllResultsByEventId(string) ([]entity.Result, error)
-	ResultByResultId(string) (*entity.Result, error)
-	ResultsByAthleteId(string) ([]entity.Result, error)
+	CreateEvent(event *entity.Event) (*entity.Event, error)
+	EventById(id string) (*entity.Event, error)
+	AllResultsByEventId(id string) ([]entity.Result, error)
+	ResultByResultId(id string) (*entity.Result, error)
+	ResultsByAthleteId(id string) ([]entity.Result, error)
 }
 
 type eventService struct {
