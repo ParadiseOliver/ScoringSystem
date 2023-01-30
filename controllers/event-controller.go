@@ -37,6 +37,15 @@ func New(service usecases.EventService) EventController {
 	}
 }
 
+func (c *controller) GetAll(ctx *gin.Context) {
+	events, err := c.service.GetAll()
+	if err != nil {
+		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	ctx.IndentedJSON(http.StatusOK, events)
+}
+
 func (c *controller) CreateEvent(ctx *gin.Context) {
 	var event *entity.Event
 	err := ctx.ShouldBindJSON(&event)
@@ -52,15 +61,6 @@ func (c *controller) CreateEvent(ctx *gin.Context) {
 		log.Fatal(err)
 	}
 	ctx.IndentedJSON(http.StatusOK, event)
-}
-
-func (c *controller) GetAll(ctx *gin.Context) {
-	events, err := c.service.GetAll()
-	if err != nil {
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	ctx.IndentedJSON(http.StatusOK, events)
 }
 
 func (c *controller) AllEvents(ctx *gin.Context) {

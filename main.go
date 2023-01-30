@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"io"
 	"log"
 	"os"
@@ -25,7 +26,20 @@ func main() {
 
 	config.LoadEnvVariables()
 
-	eventRepo := repository.NewMySQLRepository()
+	db, err := config.Connectdb() // db (connection) should be passed to NewMySQLRepository and saved on struct, then accessed here.
+
+	if err != nil {
+		log.Printf("Failed to open db connection: %v", err)
+	}
+
+	defer func(*sql.DB) {
+		err := db.Close()
+		if err != nil {
+			log.Printf("Failed to close db connection: %v", err)
+		}
+	}(db)
+
+	eventRepo := repository.NewMySQLRepository(db)
 	eventService := usecases.New(eventRepo)
 	eventController := controllers.New(eventService)
 
