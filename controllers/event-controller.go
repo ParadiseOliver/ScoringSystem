@@ -26,7 +26,7 @@ type controller struct {
 }
 
 var (
-	validate *validator.Validate
+	validate *validator.Validate // Don't use global vars.
 )
 
 func New(service usecases.EventService) EventController {
@@ -58,6 +58,7 @@ func (c *controller) GetAll(ctx *gin.Context) {
 	events, err := c.service.GetAll()
 	if err != nil {
 		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 	ctx.IndentedJSON(http.StatusOK, events)
 }
@@ -65,7 +66,9 @@ func (c *controller) GetAll(ctx *gin.Context) {
 func (c *controller) AllEvents(ctx *gin.Context) {
 	events, err := c.service.GetAll()
 	if err != nil {
-		panic(err)
+		log.Printf("Failed to get all events: %v", err) // This would be log.Errorf for example
+		ctx.Status(http.StatusInternalServerError)      // Status 500 because we don't want to expose our internal workings to a bad actor.
+		return                                          // Return so we don't try and continue with the rest of the logic..
 	}
 	data := gin.H{
 		"title":  "Scoring System",
