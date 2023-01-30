@@ -15,24 +15,19 @@ import (
 	//gindump "github.com/tpkeeper/gin-dump"
 )
 
-var (
-	eventRepo       repository.EventRepository  = repository.NewMySQLRepository()
-	eventService    usecases.EventService       = usecases.New(eventRepo)
-	eventController controllers.EventController = controllers.New(eventService)
-)
-
-func init() {
-	config.LoadEnvVariables()
-}
-
-func setupLogOutput() {
-	f, _ := os.Create("gin.log")
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
-}
-
 func main() {
 
-	setupLogOutput()
+	f, err := os.Create("gin.log")
+	if err != nil {
+		log.Fatal(err)
+	}
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+
+	config.LoadEnvVariables()
+
+	eventRepo := repository.NewMySQLRepository()
+	eventService := usecases.New(eventRepo)
+	eventController := controllers.New(eventService)
 
 	r := gin.New()
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
@@ -67,9 +62,9 @@ func main() {
 	})
 
 	port, err := config.MyPort()
-
 	if err != nil {
 		log.Fatal(err)
 	}
-	r.Run(port)
+
+	log.Fatal(r.Run(port))
 }
