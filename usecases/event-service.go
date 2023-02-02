@@ -11,7 +11,12 @@ type EventService interface { // TODO: Move me to transport layer (currently mai
 	AllResultsByEventId(id string) ([]entity.Result, error)
 	ResultByResultId(id string) (*entity.Result, error)
 	ResultsByAthleteId(id string) ([]entity.Result, error)
+	AllDisciplines() ([]entity.Discipline, error)
+	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
+	AllCategories() ([]entity.Category, error)
 	AllAgeGroups() ([]entity.AgeGroup, error)
+	AllGenders() ([]entity.Gender, error)
+	AllCategoryGroups() ([]entity.CategoryGroup, error)
 }
 
 type EventRepository interface {
@@ -21,7 +26,12 @@ type EventRepository interface {
 	AllResultsByEventId(id string) ([]entity.Result, error)
 	ResultByResultId(id string) (*entity.Result, error)
 	ResultsByAthleteId(id string) ([]entity.Result, error)
+	AllDisciplines() ([]entity.Discipline, error)
+	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
+	AllCategories() ([]entity.Category, error)
 	AllAgeGroups() ([]entity.AgeGroup, error)
+	AllGenders() ([]entity.Gender, error)
+	AllCategoryGroups() ([]entity.CategoryGroup, error)
 }
 
 type eventService struct {
@@ -58,6 +68,26 @@ func (service eventService) ResultsByAthleteId(id string) ([]entity.Result, erro
 	return service.repo.ResultsByAthleteId(id)
 }
 
+func (service eventService) AllDisciplines() ([]entity.Discipline, error) {
+	return service.repo.AllDisciplines()
+}
+
+func (service eventService) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
+	return service.repo.AddDiscipline(discipline)
+}
+
+func (service eventService) AllCategories() ([]entity.Category, error) {
+	return service.repo.AllCategories()
+}
+
 func (service eventService) AllAgeGroups() ([]entity.AgeGroup, error) {
 	return service.repo.AllAgeGroups()
+}
+
+func (service eventService) AllGenders() ([]entity.Gender, error) {
+	return service.repo.AllGenders()
+}
+
+func (service eventService) AllCategoryGroups() ([]entity.CategoryGroup, error) {
+	return service.repo.AllCategoryGroups()
 }

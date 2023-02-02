@@ -137,9 +137,73 @@ func (repo *eventRepository) ResultsByAthleteId(id string) ([]entity.Result, err
 	return results, nil
 }
 
+func (repo *eventRepository) AllDisciplines() ([]entity.Discipline, error) {
+
+	res, err := repo.db.Query("SELECT disciplines_id, discipline FROM disciplines")
+
+	if err != nil {
+		return nil, err
+	}
+
+	var disciplines []entity.Discipline
+
+	for res.Next() {
+		var discipline entity.Discipline
+		if err = res.Scan(&discipline.ID, &discipline.Discipline); err != nil {
+			return nil, err
+		}
+
+		disciplines = append(disciplines, discipline)
+	}
+
+	return disciplines, nil
+}
+
+func (repo *eventRepository) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
+
+	sql := fmt.Sprintf("INSERT INTO disciplines (discipline) VALUES ('%s')", discipline.Discipline)
+	res, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+
+	if err != nil {
+		return nil, err
+	}
+
+	discipline.ID = strconv.Itoa(int(lastId)) // Can use RETURNING in sql with sqlc
+
+	return discipline, nil
+}
+
+func (repo *eventRepository) AllCategories() ([]entity.Category, error) {
+
+	res, err := repo.db.Query("SELECT categories_id, category FROM categories")
+
+	if err != nil {
+		return nil, err
+	}
+
+	var categories []entity.Category
+
+	for res.Next() {
+		var category entity.Category
+		if err = res.Scan(&category.ID, &category.Category); err != nil {
+			return nil, err
+		}
+
+		categories = append(categories, category)
+	}
+
+	return categories, nil
+}
+
 func (repo *eventRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 
-	res, err := repo.db.Query("SELECT id, agegroup_id, min_age, max_age, group_name FROM agegroups")
+	res, err := repo.db.Query("SELECT agegroup_id, min_age, max_age, group_name FROM agegroups")
 
 	if err != nil {
 		return nil, err
@@ -157,4 +221,48 @@ func (repo *eventRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 	}
 
 	return ageGroups, nil
+}
+
+func (repo *eventRepository) AllGenders() ([]entity.Gender, error) {
+
+	res, err := repo.db.Query("SELECT genders_id, gender FROM genders")
+
+	if err != nil {
+		return nil, err
+	}
+
+	var genders []entity.Gender
+
+	for res.Next() {
+		var gender entity.Gender
+		if err = res.Scan(&gender.ID, &gender.Gender); err != nil {
+			return nil, err
+		}
+
+		genders = append(genders, gender)
+	}
+
+	return genders, nil
+}
+
+func (repo *eventRepository) AllCategoryGroups() ([]entity.CategoryGroup, error) {
+
+	res, err := repo.db.Query("SELECT cat_id, discipline_id, category_id, agegroup_id, gender_id FROM category_groups")
+
+	if err != nil {
+		return nil, err
+	}
+
+	var categoryGroups []entity.CategoryGroup
+
+	for res.Next() {
+		var categoryGroup entity.CategoryGroup
+		if err = res.Scan(&categoryGroup.ID, &categoryGroup.DisciplineId, &categoryGroup.CategoryId, &categoryGroup.AgegroupId, &categoryGroup.GenderId); err != nil {
+			return nil, err
+		}
+
+		categoryGroups = append(categoryGroups, categoryGroup)
+	}
+
+	return categoryGroups, nil
 }

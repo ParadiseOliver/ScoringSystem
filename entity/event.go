@@ -16,11 +16,26 @@ type Event struct {
 	CategoryGroups []CategoryGroup `json:"category_groups"`
 }
 
+type Discipline struct {
+	ID         string `json:"id"`
+	Discipline string `json:"discipline"`
+}
+
+type Category struct {
+	ID       string `json:"id"`
+	Category string `json:"discipline"`
+}
+
 type AgeGroup struct {
 	ID           string `json:"id"`
 	MinAge       int    `json:"min_age"`
 	MaxAge       int    `json:"max_age"`
 	CategoryName string `json:"category_name"`
+}
+
+type Gender struct {
+	ID     string `json:"id"`
+	Gender string `json:"gender"`
 }
 
 type CategoryGroup struct {
