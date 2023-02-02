@@ -6,10 +6,18 @@ import (
 
 	"github.com/ParadiseOliver/ScoringSystem/entity"
 	"github.com/ParadiseOliver/ScoringSystem/usecases"
-	"github.com/ParadiseOliver/ScoringSystem/validators"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
+	logger "go.uber.org/zap"
 )
+
+func init() {
+	logger, err := logger.NewProduction()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	defer logger.Sync()
+	//sugar := logger.Sugar()
+}
 
 type EventController interface {
 	GetAll(ctx *gin.Context)
@@ -19,19 +27,16 @@ type EventController interface {
 	AllResultsByEventId(ctx *gin.Context)
 	ResultByResultId(ctx *gin.Context)
 	ResultsByAthleteId(ctx *gin.Context)
+	AllAgeGroups(ctx *gin.Context)
 }
 
 type controller struct {
 	service usecases.EventService
 }
 
-var (
-	validate *validator.Validate // Don't use global vars.
-)
-
 func New(service usecases.EventService) EventController {
-	validate = validator.New()
-	validate.RegisterValidation("is-after", validators.ValidateIsAfter)
+	//validate := validator.New()
+	//validate.RegisterValidation("is-after", validators.ValidateIsAfter)
 	return &controller{
 		service: service,
 	}
@@ -40,10 +45,10 @@ func New(service usecases.EventService) EventController {
 func (c *controller) GetAll(ctx *gin.Context) {
 	events, err := c.service.GetAll()
 	if err != nil {
-		ctx.IndentedJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.IndentedJSON(http.StatusOK, events)
+	ctx.JSON(http.StatusOK, events)
 }
 
 func (c *controller) CreateEvent(ctx *gin.Context) {
@@ -52,15 +57,15 @@ func (c *controller) CreateEvent(ctx *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = validate.Struct(event)
-	if err != nil {
-		log.Fatal(err)
-	}
+	//err = validate.Struct(event)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 	event, err = c.service.CreateEvent(event)
 	if err != nil {
 		log.Fatal(err)
 	}
-	ctx.IndentedJSON(http.StatusOK, event)
+	ctx.JSON(http.StatusOK, event)
 }
 
 func (c *controller) AllEvents(ctx *gin.Context) {
@@ -81,9 +86,9 @@ func (c *controller) GetEventById(ctx *gin.Context) {
 	id := ctx.Param("eventId")
 	event, err := c.service.GetEventById(id)
 	if err != nil {
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"message": "Event not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Event not found"})
 	}
-	ctx.IndentedJSON(http.StatusOK, event)
+	ctx.JSON(http.StatusOK, event)
 }
 
 func (c *controller) AllResultsByEventId(ctx *gin.Context) {
@@ -91,10 +96,10 @@ func (c *controller) AllResultsByEventId(ctx *gin.Context) {
 	results, err := c.service.AllResultsByEventId(id)
 
 	if err != nil {
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"message": "Results not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Results not found"})
 		return
 	}
-	ctx.IndentedJSON(http.StatusOK, results)
+	ctx.JSON(http.StatusOK, results)
 }
 
 func (c *controller) ResultByResultId(ctx *gin.Context) {
@@ -102,10 +107,10 @@ func (c *controller) ResultByResultId(ctx *gin.Context) {
 	result, err := c.service.ResultByResultId(id)
 
 	if err != nil {
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Result not found"})
 		return
 	}
-	ctx.IndentedJSON(http.StatusOK, result)
+	ctx.JSON(http.StatusOK, result)
 }
 
 func (c *controller) ResultsByAthleteId(ctx *gin.Context) {
@@ -113,8 +118,18 @@ func (c *controller) ResultsByAthleteId(ctx *gin.Context) {
 	results, err := c.service.ResultsByAthleteId(athleteId)
 
 	if err != nil {
-		ctx.IndentedJSON(http.StatusNotFound, gin.H{"message": "Result not found"})
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Result not found"})
 		return
 	}
-	ctx.IndentedJSON(http.StatusOK, results)
+	ctx.JSON(http.StatusOK, results)
+}
+
+func (c *controller) AllAgeGroups(ctx *gin.Context) {
+	ageGroups, err := c.service.AllAgeGroups()
+
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"message": "Result not found"})
+		return
+	}
+	ctx.JSON(http.StatusOK, ageGroups)
 }

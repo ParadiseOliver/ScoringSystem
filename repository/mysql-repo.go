@@ -16,26 +16,13 @@ type eventRepository struct {
 
 // TODO: Have a look at the sqlc package. You write SQL and it generates entities and queries.
 
-func NewMySQLRepository(db *sql.DB) *eventRepository { // TODO: Struct should be called MySQLRepository?
+func NewMySQLRepository(db *sql.DB) *eventRepository { // TODO: Struct should be called MySQLRepository? Done
 	return &eventRepository{
 		db: db,
 	}
 }
 
 func (repo *eventRepository) FindAll() ([]entity.Event, error) {
-
-	/* 	db, err := config.Connectdb() // db (connection) should be passed to NewMySQLRepository and saved on struct, then accessed here.
-
-	   	if err != nil {
-	   		return nil, err
-	   	}
-
-	   	defer func(*sql.DB) {
-	   		err := db.Close()
-	   		if err != nil {
-	   			log.Printf("Failed to close db connection: %v", err)
-	   		}
-	   	}(db) */
 
 	var events []entity.Event
 
@@ -61,15 +48,6 @@ func (repo *eventRepository) FindAll() ([]entity.Event, error) {
 }
 
 func (repo *eventRepository) CreateEvent(event *entity.Event) (*entity.Event, error) {
-	/*
-		db, err := config.Connectdb()
-
-		if err != nil {
-			log.Fatalf("Failed to create a DB Connection: %v", err)
-			return nil, err
-		}
-
-		defer db.Close() */
 
 	sql := fmt.Sprintf("INSERT INTO events (name) VALUES ('%s')", event.Name)
 	res, err := repo.db.Exec(sql)
@@ -90,12 +68,6 @@ func (repo *eventRepository) CreateEvent(event *entity.Event) (*entity.Event, er
 }
 
 func (repo *eventRepository) EventById(id string) (*entity.Event, error) {
-	/* 	db, err := config.Connectdb()
-
-	   	if err != nil {
-	   		log.Fatalf("Failed to create a DB Connection: %v", err)
-	   		return nil, err
-	   	} */
 
 	var event entity.Event
 
@@ -107,13 +79,6 @@ func (repo *eventRepository) EventById(id string) (*entity.Event, error) {
 }
 
 func (repo *eventRepository) AllResultsByEventId(id string) ([]entity.Result, error) {
-	/*
-		db, err := config.Connectdb()
-
-		if err != nil {
-			log.Fatalf("Failed to create a DB Connection: %v", err)
-			return nil, err
-		} */
 
 	var results []entity.Result
 
@@ -137,13 +102,6 @@ func (repo *eventRepository) AllResultsByEventId(id string) ([]entity.Result, er
 }
 
 func (repo *eventRepository) ResultByResultId(id string) (*entity.Result, error) {
-	/*
-		db, err := config.Connectdb()
-
-		if err != nil {
-			log.Fatalf("Failed to create a DB Connection: %v", err)
-			return nil, err
-		} */
 
 	var result entity.Result
 
@@ -157,12 +115,6 @@ func (repo *eventRepository) ResultByResultId(id string) (*entity.Result, error)
 }
 
 func (repo *eventRepository) ResultsByAthleteId(id string) ([]entity.Result, error) {
-	/*
-		db, err := config.Connectdb()
-
-		if err != nil {
-			panic(err)
-		} */
 
 	var results []entity.Result
 
@@ -183,4 +135,26 @@ func (repo *eventRepository) ResultsByAthleteId(id string) ([]entity.Result, err
 	}
 
 	return results, nil
+}
+
+func (repo *eventRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
+
+	res, err := repo.db.Query("SELECT id, agegroup_id, min_age, max_age, group_name FROM agegroups")
+
+	if err != nil {
+		return nil, err
+	}
+
+	var ageGroups []entity.AgeGroup
+
+	for res.Next() {
+		var ageGroup entity.AgeGroup
+		if err = res.Scan(&ageGroup.ID, &ageGroup.MinAge, &ageGroup.MaxAge, &ageGroup.CategoryName); err != nil {
+			return nil, err
+		}
+
+		ageGroups = append(ageGroups, ageGroup)
+	}
+
+	return ageGroups, nil
 }
