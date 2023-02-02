@@ -13,6 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
+	logger "go.uber.org/zap"
 	//gindump "github.com/tpkeeper/gin-dump"
 )
 
@@ -24,9 +25,16 @@ func main() {
 	}
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 
+	logger, err := logger.NewProduction()
+	if err != nil {
+		log.Fatalf("can't initialize zap logger: %v", err)
+	}
+	defer logger.Sync()
+	//sugar := logger.Sugar()
+
 	config.LoadEnvVariables()
 
-	db, err := config.Connectdb() // db (connection) should be passed to NewMySQLRepository and saved on struct, then accessed here.
+	db, err := config.Connectdb()
 
 	if err != nil {
 		log.Printf("Failed to open db connection: %v", err)
@@ -35,6 +43,7 @@ func main() {
 	defer func(*sql.DB) {
 		err := db.Close()
 		if err != nil {
+
 			log.Printf("Failed to close db connection: %v", err)
 		}
 	}(db)
@@ -59,6 +68,7 @@ func main() {
 			events.GET("/", eventController.GetAll)
 			events.POST("/", eventController.CreateEvent)
 			events.GET("/:eventId", eventController.GetEventById)
+			events.GET("/agegroups", eventController.AllAgeGroups)
 
 			events.GET("/result/:resultId", eventController.ResultByResultId)
 			events.GET("/results/:eventId", eventController.AllResultsByEventId)

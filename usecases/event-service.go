@@ -11,6 +11,7 @@ type EventService interface { // TODO: Move me to transport layer (currently mai
 	AllResultsByEventId(id string) ([]entity.Result, error)
 	ResultByResultId(id string) (*entity.Result, error)
 	ResultsByAthleteId(id string) ([]entity.Result, error)
+	AllAgeGroups() ([]entity.AgeGroup, error)
 }
 
 type EventRepository interface {
@@ -20,6 +21,7 @@ type EventRepository interface {
 	AllResultsByEventId(id string) ([]entity.Result, error)
 	ResultByResultId(id string) (*entity.Result, error)
 	ResultsByAthleteId(id string) ([]entity.Result, error)
+	AllAgeGroups() ([]entity.AgeGroup, error)
 }
 
 type eventService struct {
@@ -54,4 +56,8 @@ func (service eventService) ResultByResultId(id string) (*entity.Result, error) 
 
 func (service eventService) ResultsByAthleteId(id string) ([]entity.Result, error) {
 	return service.repo.ResultsByAthleteId(id)
+}
+
+func (service eventService) AllAgeGroups() ([]entity.AgeGroup, error) {
+	return service.repo.AllAgeGroups()
 }
