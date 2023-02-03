@@ -179,6 +179,18 @@ func (repo *eventRepository) AddDiscipline(discipline *entity.Discipline) (*enti
 	return discipline, nil
 }
 
+func (repo *eventRepository) DelDiscipline(id string) error {
+
+	sql := fmt.Sprintf("DELETE FROM disciplines WHERE disciplines_id = '%s'", id)
+	_, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (repo *eventRepository) AllCategories() ([]entity.Category, error) {
 
 	res, err := repo.db.Query("SELECT categories_id, category FROM categories")

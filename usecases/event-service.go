@@ -13,6 +13,7 @@ type EventService interface { // TODO: Move me to transport layer (currently mai
 	ResultsByAthleteId(id string) ([]entity.Result, error)
 	AllDisciplines() ([]entity.Discipline, error)
 	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
+	DelDiscipline(id string) error
 	AllCategories() ([]entity.Category, error)
 	AllAgeGroups() ([]entity.AgeGroup, error)
 	AllGenders() ([]entity.Gender, error)
@@ -28,6 +29,7 @@ type EventRepository interface {
 	ResultsByAthleteId(id string) ([]entity.Result, error)
 	AllDisciplines() ([]entity.Discipline, error)
 	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
+	DelDiscipline(id string) error
 	AllCategories() ([]entity.Category, error)
 	AllAgeGroups() ([]entity.AgeGroup, error)
 	AllGenders() ([]entity.Gender, error)
@@ -74,6 +76,10 @@ func (service eventService) AllDisciplines() ([]entity.Discipline, error) {
 
 func (service eventService) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
 	return service.repo.AddDiscipline(discipline)
+}
+
+func (service eventService) DelDiscipline(id string) error {
+	return service.repo.DelDiscipline(id)
 }
 
 func (service eventService) AllCategories() ([]entity.Category, error) {

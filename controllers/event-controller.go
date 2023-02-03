@@ -29,6 +29,7 @@ type EventController interface {
 	ResultsByAthleteId(ctx *gin.Context)
 	AllDisciplines(ctx *gin.Context)
 	AddDiscipline(ctx *gin.Context)
+	DelDiscipline(ctx *gin.Context)
 	AllCategories(ctx *gin.Context)
 	AllAgeGroups(ctx *gin.Context)
 	AllGenders(ctx *gin.Context)
@@ -165,6 +166,18 @@ func (c *controller) AddDiscipline(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, discipline)
+}
+
+func (c *controller) DelDiscipline(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	err := c.service.DelDiscipline(id)
+	if err != nil {
+		log.Printf("Failed to delete discipline: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	ctx.Status(http.StatusOK)
 }
 
 func (c *controller) AllCategories(ctx *gin.Context) {
