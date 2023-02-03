@@ -68,7 +68,13 @@ func main() {
 			events.GET("/", eventController.GetAll)
 			events.POST("/", eventController.CreateEvent)
 			events.GET("/:eventId", eventController.GetEventById)
+			events.GET("/disciplines", eventController.AllDisciplines)
+			events.POST("/discipline", eventController.AddDiscipline)
+			events.DELETE("/discipline/:id", eventController.DelDiscipline)
+			events.GET("/categories", eventController.AllCategories)
 			events.GET("/agegroups", eventController.AllAgeGroups)
+			events.GET("/genders", eventController.AllGenders)
+			events.GET("/cat-groups", eventController.AllCategoryGroups)
 
 			events.GET("/result/:resultId", eventController.ResultByResultId)
 			events.GET("/results/:eventId", eventController.AllResultsByEventId)
