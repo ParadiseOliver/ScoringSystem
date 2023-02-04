@@ -16,7 +16,7 @@ type eventRepository struct {
 
 // TODO: Have a look at the sqlc package. You write SQL and it generates entities and queries.
 
-func NewMySQLRepository(db *sql.DB) *eventRepository { // TODO: Struct should be called MySQLRepository? Done
+func NewMySQLRepository(db *sql.DB) *eventRepository { // TODO: Struct should be called MySQLRepository?
 	return &eventRepository{
 		db: db,
 	}

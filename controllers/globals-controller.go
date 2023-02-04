@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/ParadiseOliver/ScoringSystem/entity"
-	"github.com/ParadiseOliver/ScoringSystem/usecases"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,11 +18,21 @@ type GlobalController interface {
 	AllCategoryGroups(ctx *gin.Context)
 }
 
-type globalController struct {
-	service usecases.EventService
+type GlobalService interface {
+	AllDisciplines() ([]entity.Discipline, error)
+	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
+	DelDiscipline(id string) error
+	AllCategories() ([]entity.Category, error)
+	AllAgeGroups() ([]entity.AgeGroup, error)
+	AllGenders() ([]entity.Gender, error)
+	AllCategoryGroups() ([]entity.CategoryGroup, error)
 }
 
-func NewGlobalController(service usecases.EventService) GlobalController {
+type globalController struct {
+	service GlobalService
+}
+
+func NewGlobalController(service GlobalService) GlobalController {
 	//validate := validator.New()
 	//validate.RegisterValidation("is-after", validators.ValidateIsAfter)
 	return &globalController{

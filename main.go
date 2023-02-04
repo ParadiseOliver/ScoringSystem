@@ -49,9 +49,11 @@ func main() {
 	}(db)
 
 	eventRepo := repository.NewMySQLRepository(db)
+	//globalRepo := repository.NewMySQLRepository(db)
 	eventService := usecases.New(eventRepo)
+	globalService := usecases.NewGlobalService(eventRepo)
 	eventController := controllers.New(eventService)
-	globalController := controllers.NewGlobalController(eventService)
+	globalController := controllers.NewGlobalController(globalService)
 
 	r := gin.New()
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
