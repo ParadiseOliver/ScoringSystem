@@ -11,20 +11,13 @@ type EventRepository interface {
 	AllResultsByEventId(id string) ([]entity.Result, error)
 	ResultByResultId(id string) (*entity.Result, error)
 	ResultsByAthleteId(id string) ([]entity.Result, error)
-	AllDisciplines() ([]entity.Discipline, error)
-	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
-	DelDiscipline(id string) error
-	AllCategories() ([]entity.Category, error)
-	AllAgeGroups() ([]entity.AgeGroup, error)
-	AllGenders() ([]entity.Gender, error)
-	AllCategoryGroups() ([]entity.CategoryGroup, error)
 }
 
 type eventService struct {
 	repo EventRepository
 }
 
-func New(repo EventRepository) *eventService {
+func NewEventService(repo EventRepository) *eventService {
 	return &eventService{
 		repo: repo,
 	}

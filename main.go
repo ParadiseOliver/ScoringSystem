@@ -48,10 +48,10 @@ func main() {
 		}
 	}(db)
 
-	eventRepo := repository.NewMySQLRepository(db)
-	//globalRepo := repository.NewMySQLRepository(db)
-	eventService := usecases.New(eventRepo)
-	globalService := usecases.NewGlobalService(eventRepo)
+	eventRepo := repository.NewMySQLEventRepository(db)
+	globalRepo := repository.NewMySQLGlobalRepository(db)
+	eventService := usecases.NewEventService(eventRepo)
+	globalService := usecases.NewGlobalService(globalRepo)
 	eventController := controllers.New(eventService)
 	globalController := controllers.NewGlobalController(globalService)
 

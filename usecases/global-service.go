@@ -4,11 +4,21 @@ import (
 	"github.com/ParadiseOliver/ScoringSystem/entity"
 )
 
-type globalService struct {
-	repo EventRepository
+type GlobalRepository interface {
+	AllDisciplines() ([]entity.Discipline, error)
+	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
+	DelDiscipline(id string) error
+	AllCategories() ([]entity.Category, error)
+	AllAgeGroups() ([]entity.AgeGroup, error)
+	AllGenders() ([]entity.Gender, error)
+	AllCategoryGroups() ([]entity.CategoryGroup, error)
 }
 
-func NewGlobalService(repo EventRepository) *globalService {
+type globalService struct {
+	repo GlobalRepository
+}
+
+func NewGlobalService(repo GlobalRepository) *globalService {
 	return &globalService{
 		repo: repo,
 	}

@@ -55,7 +55,12 @@ func (c *eventController) GetAll(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, events)
+	wrapped := struct {
+		Fields []entity.Event `json:"events"`
+	}{
+		events,
+	}
+	ctx.JSON(http.StatusOK, wrapped)
 }
 
 func (c *eventController) CreateEvent(ctx *gin.Context) {
