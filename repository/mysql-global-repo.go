@@ -96,6 +96,38 @@ func (repo *mySqlGlobalRepository) AllCategories() ([]entity.Category, error) {
 	return categories, nil
 }
 
+func (repo *mySqlGlobalRepository) AddCategory(category *entity.Category) (*entity.Category, error) {
+
+	sql := fmt.Sprintf("INSERT INTO categories (category) VALUES ('%s')", category.Category)
+	res, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+
+	if err != nil {
+		return nil, err
+	}
+
+	category.ID = strconv.Itoa(int(lastId)) // Can use RETURNING in sql with sqlc
+
+	return category, nil
+}
+
+func (repo *mySqlGlobalRepository) DelCategory(id string) error {
+
+	sql := fmt.Sprintf("DELETE FROM categories WHERE categories_id = '%s'", id)
+	_, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (repo *mySqlGlobalRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 
 	res, err := repo.db.Query("SELECT agegroup_id, min_age, max_age, group_name FROM agegroups")
@@ -118,6 +150,38 @@ func (repo *mySqlGlobalRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 	return ageGroups, nil
 }
 
+func (repo *mySqlGlobalRepository) AddAgeGroup(ageGroup *entity.AgeGroup) (*entity.AgeGroup, error) {
+
+	sql := fmt.Sprintf("INSERT INTO agegroups (min_age, max_age, group_name) VALUES ('%d', '%d', '%s')", ageGroup.MinAge, ageGroup.MaxAge, ageGroup.CategoryName)
+	res, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+
+	if err != nil {
+		return nil, err
+	}
+
+	ageGroup.ID = strconv.Itoa(int(lastId)) // Can use RETURNING in sql with sqlc
+
+	return ageGroup, nil
+}
+
+func (repo *mySqlGlobalRepository) DelAgeGroup(id string) error {
+
+	sql := fmt.Sprintf("DELETE FROM agegroups WHERE agegroup_id = '%s'", id)
+	_, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (repo *mySqlGlobalRepository) AllGenders() ([]entity.Gender, error) {
 
 	res, err := repo.db.Query("SELECT genders_id, gender FROM genders")
@@ -138,6 +202,38 @@ func (repo *mySqlGlobalRepository) AllGenders() ([]entity.Gender, error) {
 	}
 
 	return genders, nil
+}
+
+func (repo *mySqlGlobalRepository) AddGender(gender *entity.Gender) (*entity.Gender, error) {
+
+	sql := fmt.Sprintf("INSERT INTO genders (gender) VALUES ('%s')", gender.Gender)
+	res, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+
+	if err != nil {
+		return nil, err
+	}
+
+	gender.ID = strconv.Itoa(int(lastId)) // Can use RETURNING in sql with sqlc
+
+	return gender, nil
+}
+
+func (repo *mySqlGlobalRepository) DelGender(id string) error {
+
+	sql := fmt.Sprintf("DELETE FROM genders WHERE genders_id = '%s'", id)
+	_, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (repo *mySqlGlobalRepository) AllCategoryGroups() ([]entity.CategoryGroup, error) {
