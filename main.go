@@ -48,9 +48,12 @@ func main() {
 		}
 	}(db)
 
-	eventRepo := repository.NewMySQLRepository(db)
-	eventService := usecases.New(eventRepo)
+	eventRepo := repository.NewMySQLEventRepository(db)
+	globalRepo := repository.NewMySQLGlobalRepository(db)
+	eventService := usecases.NewEventService(eventRepo)
+	globalService := usecases.NewGlobalService(globalRepo)
 	eventController := controllers.New(eventService)
+	globalController := controllers.NewGlobalController(globalService)
 
 	r := gin.New()
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
@@ -68,13 +71,24 @@ func main() {
 			events.GET("/", eventController.GetAll)
 			events.POST("/", eventController.CreateEvent)
 			events.GET("/:eventId", eventController.GetEventById)
-			events.GET("/disciplines", eventController.AllDisciplines)
-			events.POST("/discipline", eventController.AddDiscipline)
-			events.DELETE("/discipline/:id", eventController.DelDiscipline)
-			events.GET("/categories", eventController.AllCategories)
-			events.GET("/agegroups", eventController.AllAgeGroups)
-			events.GET("/genders", eventController.AllGenders)
-			events.GET("/cat-groups", eventController.AllCategoryGroups)
+
+			events.GET("/disciplines", globalController.AllDisciplines)
+			events.POST("/discipline", globalController.AddDiscipline)
+			events.DELETE("/discipline/:id", globalController.DelDiscipline)
+
+			events.GET("/categories", globalController.AllCategories)
+			events.POST("/category", globalController.AddCategory)
+			events.DELETE("/category/:id", globalController.DelCategory)
+
+			events.GET("/agegroups", globalController.AllAgeGroups)
+			events.POST("/agegroup", globalController.AddAgeGroup)
+			events.DELETE("/agegroup/:id", globalController.DelAgeGroup)
+
+			events.GET("/genders", globalController.AllGenders)
+			events.POST("/gender", globalController.AddGender)
+			events.DELETE("/gender/:id", globalController.DelGender)
+
+			events.GET("/cat-groups", globalController.AllCategoryGroups)
 
 			events.GET("/result/:resultId", eventController.ResultByResultId)
 			events.GET("/results/:eventId", eventController.AllResultsByEventId)

@@ -23,7 +23,7 @@ type Discipline struct {
 
 type Category struct {
 	ID       string `json:"id"`
-	Category string `json:"discipline"`
+	Category string `json:"category"`
 }
 
 type AgeGroup struct {
