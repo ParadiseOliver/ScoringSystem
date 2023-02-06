@@ -8,22 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type CategoryController interface {
-	AllDisciplines(ctx *gin.Context)
-	AddDiscipline(ctx *gin.Context)
-	DelDiscipline(ctx *gin.Context)
-	AllCategories(ctx *gin.Context)
-	AddCategory(ctx *gin.Context)
-	DelCategory(ctx *gin.Context)
-	AllAgeGroups(ctx *gin.Context)
-	AddAgeGroup(ctx *gin.Context)
-	DelAgeGroup(ctx *gin.Context)
-	AllGenders(ctx *gin.Context)
-	AddGender(ctx *gin.Context)
-	DelGender(ctx *gin.Context)
-	AllCategoryGroups(ctx *gin.Context)
-}
-
 type CategoryService interface {
 	AllDisciplines() ([]entity.Discipline, error)
 	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
@@ -44,7 +28,7 @@ type categoryController struct {
 	service CategoryService
 }
 
-func NewCategoryController(service CategoryService) CategoryController {
+func NewCategoryController(service CategoryService) *categoryController {
 	//validate := validator.New()
 	//validate.RegisterValidation("is-after", validators.ValidateIsAfter)
 	return &categoryController{

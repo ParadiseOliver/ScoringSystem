@@ -1,27 +1,42 @@
 package routes
 
 import (
-	"github.com/ParadiseOliver/ScoringSystem/controllers"
 	"github.com/gin-gonic/gin"
 )
 
-func Categories(category *gin.RouterGroup, globalController controllers.CategoryController) {
+type CategoryController interface {
+	AllDisciplines(ctx *gin.Context)
+	AddDiscipline(ctx *gin.Context)
+	DelDiscipline(ctx *gin.Context)
+	AllCategories(ctx *gin.Context)
+	AddCategory(ctx *gin.Context)
+	DelCategory(ctx *gin.Context)
+	AllAgeGroups(ctx *gin.Context)
+	AddAgeGroup(ctx *gin.Context)
+	DelAgeGroup(ctx *gin.Context)
+	AllGenders(ctx *gin.Context)
+	AddGender(ctx *gin.Context)
+	DelGender(ctx *gin.Context)
+	AllCategoryGroups(ctx *gin.Context)
+}
 
-	category.GET("/disciplines", globalController.AllDisciplines)
-	category.POST("/discipline", globalController.AddDiscipline)
-	category.DELETE("/discipline/:id", globalController.DelDiscipline)
+func Categories(category *gin.RouterGroup, categoryController CategoryController) {
 
-	category.GET("/categories", globalController.AllCategories)
-	category.POST("/category", globalController.AddCategory)
-	category.DELETE("/category/:id", globalController.DelCategory)
+	category.GET("/disciplines", categoryController.AllDisciplines)
+	category.POST("/discipline", categoryController.AddDiscipline)
+	category.DELETE("/discipline/:id", categoryController.DelDiscipline)
 
-	category.GET("/agegroups", globalController.AllAgeGroups)
-	category.POST("/agegroup", globalController.AddAgeGroup)
-	category.DELETE("/agegroup/:id", globalController.DelAgeGroup)
+	category.GET("/categories", categoryController.AllCategories)
+	category.POST("/category", categoryController.AddCategory)
+	category.DELETE("/category/:id", categoryController.DelCategory)
 
-	category.GET("/genders", globalController.AllGenders)
-	category.POST("/gender", globalController.AddGender)
-	category.DELETE("/gender/:id", globalController.DelGender)
+	category.GET("/agegroups", categoryController.AllAgeGroups)
+	category.POST("/agegroup", categoryController.AddAgeGroup)
+	category.DELETE("/agegroup/:id", categoryController.DelAgeGroup)
 
-	category.GET("/cat-groups", globalController.AllCategoryGroups)
+	category.GET("/genders", categoryController.AllGenders)
+	category.POST("/gender", categoryController.AddGender)
+	category.DELETE("/gender/:id", categoryController.DelGender)
+
+	category.GET("/cat-groups", categoryController.AllCategoryGroups)
 }

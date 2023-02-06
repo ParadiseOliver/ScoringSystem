@@ -51,10 +51,13 @@ func main() {
 
 	eventRepo := repository.NewMySQLEventRepository(db)
 	categoryRepo := repository.NewMySQLCategoryRepository(db)
+	resultsRepo := repository.NewMySQLResultsRepository(db)
 	eventService := usecases.NewEventService(eventRepo)
 	categoryService := usecases.NewCategoryService(categoryRepo)
-	eventController := controllers.New(eventService)
+	resultsService := usecases.NewResultsService(resultsRepo)
+	eventController := controllers.NewEventController(eventService)
 	categoryController := controllers.NewCategoryController(categoryService)
+	resultsController := controllers.NewResultsController(resultsService)
 
 	r := gin.New()
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
@@ -67,17 +70,9 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
-		events := v1.Group("/events")
-		{
-			events.GET("/", eventController.GetAll)
-			events.POST("/", eventController.CreateEvent)
-			events.GET("/:eventId", eventController.GetEventById)
-
-			events.GET("/result/:resultId", eventController.ResultByResultId)
-			events.GET("/results/:eventId", eventController.AllResultsByEventId)
-			events.GET("/athlete/:athleteId/results", eventController.ResultsByAthleteId)
-		}
+		routes.Events(v1.Group("/events"), eventController)
 		routes.Categories(v1.Group("/category"), categoryController)
+		routes.Results(v1.Group("/results"), resultsController)
 	}
 
 	pages := r.Group("/pages")
