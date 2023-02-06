@@ -18,30 +18,17 @@ func init() {
 	//sugar := logger.Sugar()
 }
 
-type EventService interface { // TODO: Move me to transport layer (currently main)
+type EventService interface {
 	GetAll() ([]entity.Event, error)
 	CreateEvent(event *entity.Event) (*entity.Event, error)
 	GetEventById(id string) (*entity.Event, error)
-	AllResultsByEventId(id string) ([]entity.Result, error)
-	ResultByResultId(id string) (*entity.Result, error)
-	ResultsByAthleteId(id string) ([]entity.Result, error)
-}
-
-type EventController interface {
-	GetAll(ctx *gin.Context)
-	CreateEvent(ctx *gin.Context)
-	AllEvents(ctx *gin.Context)
-	GetEventById(ctx *gin.Context)
-	AllResultsByEventId(ctx *gin.Context)
-	ResultByResultId(ctx *gin.Context)
-	ResultsByAthleteId(ctx *gin.Context)
 }
 
 type eventController struct {
 	service EventService
 }
 
-func New(service EventService) EventController {
+func NewEventController(service EventService) *eventController {
 	//validate := validator.New()
 	//validate.RegisterValidation("is-after", validators.ValidateIsAfter)
 	return &eventController{
@@ -105,37 +92,4 @@ func (c *eventController) GetEventById(ctx *gin.Context) {
 		ctx.Status(http.StatusInternalServerError)
 	}
 	ctx.JSON(http.StatusOK, event)
-}
-
-func (c *eventController) AllResultsByEventId(ctx *gin.Context) {
-	id := ctx.Param("eventId")
-	results, err := c.service.AllResultsByEventId(id)
-
-	if err != nil {
-		ctx.Status(http.StatusInternalServerError)
-		return
-	}
-	ctx.JSON(http.StatusOK, results)
-}
-
-func (c *eventController) ResultByResultId(ctx *gin.Context) {
-	id := ctx.Param("resultId")
-	result, err := c.service.ResultByResultId(id)
-
-	if err != nil {
-		ctx.Status(http.StatusInternalServerError)
-		return
-	}
-	ctx.JSON(http.StatusOK, result)
-}
-
-func (c *eventController) ResultsByAthleteId(ctx *gin.Context) {
-	athleteId := ctx.Param("athleteId")
-	results, err := c.service.ResultsByAthleteId(athleteId)
-
-	if err != nil {
-		ctx.Status(http.StatusInternalServerError)
-		return
-	}
-	ctx.JSON(http.StatusOK, results)
 }

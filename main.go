@@ -9,6 +9,7 @@ import (
 	"github.com/ParadiseOliver/ScoringSystem/config"
 	"github.com/ParadiseOliver/ScoringSystem/controllers"
 	"github.com/ParadiseOliver/ScoringSystem/repository"
+	"github.com/ParadiseOliver/ScoringSystem/routes"
 	"github.com/ParadiseOliver/ScoringSystem/usecases"
 
 	"github.com/gin-gonic/gin"
@@ -49,11 +50,14 @@ func main() {
 	}(db)
 
 	eventRepo := repository.NewMySQLEventRepository(db)
-	globalRepo := repository.NewMySQLGlobalRepository(db)
+	categoryRepo := repository.NewMySQLCategoryRepository(db)
+	resultsRepo := repository.NewMySQLResultsRepository(db)
 	eventService := usecases.NewEventService(eventRepo)
-	globalService := usecases.NewGlobalService(globalRepo)
-	eventController := controllers.New(eventService)
-	globalController := controllers.NewGlobalController(globalService)
+	categoryService := usecases.NewCategoryService(categoryRepo)
+	resultsService := usecases.NewResultsService(resultsRepo)
+	eventController := controllers.NewEventController(eventService)
+	categoryController := controllers.NewCategoryController(categoryService)
+	resultsController := controllers.NewResultsController(resultsService)
 
 	r := gin.New()
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
@@ -66,34 +70,9 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
-		events := v1.Group("/events")
-		{
-			events.GET("/", eventController.GetAll)
-			events.POST("/", eventController.CreateEvent)
-			events.GET("/:eventId", eventController.GetEventById)
-
-			events.GET("/disciplines", globalController.AllDisciplines)
-			events.POST("/discipline", globalController.AddDiscipline)
-			events.DELETE("/discipline/:id", globalController.DelDiscipline)
-
-			events.GET("/categories", globalController.AllCategories)
-			events.POST("/category", globalController.AddCategory)
-			events.DELETE("/category/:id", globalController.DelCategory)
-
-			events.GET("/agegroups", globalController.AllAgeGroups)
-			events.POST("/agegroup", globalController.AddAgeGroup)
-			events.DELETE("/agegroup/:id", globalController.DelAgeGroup)
-
-			events.GET("/genders", globalController.AllGenders)
-			events.POST("/gender", globalController.AddGender)
-			events.DELETE("/gender/:id", globalController.DelGender)
-
-			events.GET("/cat-groups", globalController.AllCategoryGroups)
-
-			events.GET("/result/:resultId", eventController.ResultByResultId)
-			events.GET("/results/:eventId", eventController.AllResultsByEventId)
-			events.GET("/athlete/:athleteId/results", eventController.ResultsByAthleteId)
-		}
+		routes.Events(v1.Group("/events"), eventController)
+		routes.Categories(v1.Group("/category"), categoryController)
+		routes.Results(v1.Group("/results"), resultsController)
 	}
 
 	pages := r.Group("/pages")

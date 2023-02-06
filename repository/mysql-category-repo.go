@@ -8,19 +8,19 @@ import (
 	"github.com/ParadiseOliver/ScoringSystem/entity"
 )
 
-type mySqlGlobalRepository struct {
+type mySqlCategoryRepository struct {
 	db *sql.DB
 }
 
 // TODO: Have a look at the sqlc package. You write SQL and it generates entities and queries.
 
-func NewMySQLGlobalRepository(db *sql.DB) *mySqlGlobalRepository {
-	return &mySqlGlobalRepository{
+func NewMySQLCategoryRepository(db *sql.DB) *mySqlCategoryRepository {
+	return &mySqlCategoryRepository{
 		db: db,
 	}
 }
 
-func (repo *mySqlGlobalRepository) AllDisciplines() ([]entity.Discipline, error) {
+func (repo *mySqlCategoryRepository) AllDisciplines() ([]entity.Discipline, error) {
 
 	res, err := repo.db.Query("SELECT disciplines_id, discipline FROM disciplines")
 
@@ -42,7 +42,7 @@ func (repo *mySqlGlobalRepository) AllDisciplines() ([]entity.Discipline, error)
 	return disciplines, nil
 }
 
-func (repo *mySqlGlobalRepository) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
+func (repo *mySqlCategoryRepository) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
 
 	sql := fmt.Sprintf("INSERT INTO disciplines (discipline) VALUES ('%s')", discipline.Discipline)
 	res, err := repo.db.Exec(sql)
@@ -62,7 +62,7 @@ func (repo *mySqlGlobalRepository) AddDiscipline(discipline *entity.Discipline) 
 	return discipline, nil
 }
 
-func (repo *mySqlGlobalRepository) DelDiscipline(id string) error {
+func (repo *mySqlCategoryRepository) DelDiscipline(id string) error {
 
 	sql := fmt.Sprintf("DELETE FROM disciplines WHERE disciplines_id = '%s'", id)
 	_, err := repo.db.Exec(sql)
@@ -74,7 +74,7 @@ func (repo *mySqlGlobalRepository) DelDiscipline(id string) error {
 	return nil
 }
 
-func (repo *mySqlGlobalRepository) AllCategories() ([]entity.Category, error) {
+func (repo *mySqlCategoryRepository) AllCategories() ([]entity.Category, error) {
 
 	res, err := repo.db.Query("SELECT categories_id, category FROM categories")
 
@@ -96,7 +96,7 @@ func (repo *mySqlGlobalRepository) AllCategories() ([]entity.Category, error) {
 	return categories, nil
 }
 
-func (repo *mySqlGlobalRepository) AddCategory(category *entity.Category) (*entity.Category, error) {
+func (repo *mySqlCategoryRepository) AddCategory(category *entity.Category) (*entity.Category, error) {
 
 	sql := fmt.Sprintf("INSERT INTO categories (category) VALUES ('%s')", category.Category)
 	res, err := repo.db.Exec(sql)
@@ -116,7 +116,7 @@ func (repo *mySqlGlobalRepository) AddCategory(category *entity.Category) (*enti
 	return category, nil
 }
 
-func (repo *mySqlGlobalRepository) DelCategory(id string) error {
+func (repo *mySqlCategoryRepository) DelCategory(id string) error {
 
 	sql := fmt.Sprintf("DELETE FROM categories WHERE categories_id = '%s'", id)
 	_, err := repo.db.Exec(sql)
@@ -128,7 +128,7 @@ func (repo *mySqlGlobalRepository) DelCategory(id string) error {
 	return nil
 }
 
-func (repo *mySqlGlobalRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
+func (repo *mySqlCategoryRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 
 	res, err := repo.db.Query("SELECT agegroup_id, min_age, max_age, group_name FROM agegroups")
 
@@ -150,7 +150,7 @@ func (repo *mySqlGlobalRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 	return ageGroups, nil
 }
 
-func (repo *mySqlGlobalRepository) AddAgeGroup(ageGroup *entity.AgeGroup) (*entity.AgeGroup, error) {
+func (repo *mySqlCategoryRepository) AddAgeGroup(ageGroup *entity.AgeGroup) (*entity.AgeGroup, error) {
 
 	sql := fmt.Sprintf("INSERT INTO agegroups (min_age, max_age, group_name) VALUES ('%d', '%d', '%s')", ageGroup.MinAge, ageGroup.MaxAge, ageGroup.CategoryName)
 	res, err := repo.db.Exec(sql)
@@ -170,7 +170,7 @@ func (repo *mySqlGlobalRepository) AddAgeGroup(ageGroup *entity.AgeGroup) (*enti
 	return ageGroup, nil
 }
 
-func (repo *mySqlGlobalRepository) DelAgeGroup(id string) error {
+func (repo *mySqlCategoryRepository) DelAgeGroup(id string) error {
 
 	sql := fmt.Sprintf("DELETE FROM agegroups WHERE agegroup_id = '%s'", id)
 	_, err := repo.db.Exec(sql)
@@ -182,7 +182,7 @@ func (repo *mySqlGlobalRepository) DelAgeGroup(id string) error {
 	return nil
 }
 
-func (repo *mySqlGlobalRepository) AllGenders() ([]entity.Gender, error) {
+func (repo *mySqlCategoryRepository) AllGenders() ([]entity.Gender, error) {
 
 	res, err := repo.db.Query("SELECT genders_id, gender FROM genders")
 
@@ -204,7 +204,7 @@ func (repo *mySqlGlobalRepository) AllGenders() ([]entity.Gender, error) {
 	return genders, nil
 }
 
-func (repo *mySqlGlobalRepository) AddGender(gender *entity.Gender) (*entity.Gender, error) {
+func (repo *mySqlCategoryRepository) AddGender(gender *entity.Gender) (*entity.Gender, error) {
 
 	sql := fmt.Sprintf("INSERT INTO genders (gender) VALUES ('%s')", gender.Gender)
 	res, err := repo.db.Exec(sql)
@@ -224,7 +224,7 @@ func (repo *mySqlGlobalRepository) AddGender(gender *entity.Gender) (*entity.Gen
 	return gender, nil
 }
 
-func (repo *mySqlGlobalRepository) DelGender(id string) error {
+func (repo *mySqlCategoryRepository) DelGender(id string) error {
 
 	sql := fmt.Sprintf("DELETE FROM genders WHERE genders_id = '%s'", id)
 	_, err := repo.db.Exec(sql)
@@ -236,7 +236,7 @@ func (repo *mySqlGlobalRepository) DelGender(id string) error {
 	return nil
 }
 
-func (repo *mySqlGlobalRepository) AllCategoryGroups() ([]entity.CategoryGroup, error) {
+func (repo *mySqlCategoryRepository) AllCategoryGroups() ([]entity.CategoryGroup, error) {
 
 	res, err := repo.db.Query("SELECT cat_id, discipline_id, category_id, agegroup_id, gender_id FROM category_groups")
 

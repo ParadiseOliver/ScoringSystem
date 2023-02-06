@@ -8,23 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type GlobalController interface {
-	AllDisciplines(ctx *gin.Context)
-	AddDiscipline(ctx *gin.Context)
-	DelDiscipline(ctx *gin.Context)
-	AllCategories(ctx *gin.Context)
-	AddCategory(ctx *gin.Context)
-	DelCategory(ctx *gin.Context)
-	AllAgeGroups(ctx *gin.Context)
-	AddAgeGroup(ctx *gin.Context)
-	DelAgeGroup(ctx *gin.Context)
-	AllGenders(ctx *gin.Context)
-	AddGender(ctx *gin.Context)
-	DelGender(ctx *gin.Context)
-	AllCategoryGroups(ctx *gin.Context)
-}
-
-type GlobalService interface {
+type CategoryService interface {
 	AllDisciplines() ([]entity.Discipline, error)
 	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
 	DelDiscipline(id string) error
@@ -40,19 +24,19 @@ type GlobalService interface {
 	AllCategoryGroups() ([]entity.CategoryGroup, error)
 }
 
-type globalController struct {
-	service GlobalService
+type categoryController struct {
+	service CategoryService
 }
 
-func NewGlobalController(service GlobalService) GlobalController {
+func NewCategoryController(service CategoryService) *categoryController {
 	//validate := validator.New()
 	//validate.RegisterValidation("is-after", validators.ValidateIsAfter)
-	return &globalController{
+	return &categoryController{
 		service: service,
 	}
 }
 
-func (c *globalController) AllDisciplines(ctx *gin.Context) {
+func (c *categoryController) AllDisciplines(ctx *gin.Context) {
 	disciplines, err := c.service.AllDisciplines()
 
 	if err != nil {
@@ -68,7 +52,7 @@ func (c *globalController) AllDisciplines(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, wrapped)
 }
 
-func (c *globalController) AddDiscipline(ctx *gin.Context) {
+func (c *categoryController) AddDiscipline(ctx *gin.Context) {
 	var discipline *entity.Discipline
 	err := ctx.ShouldBindJSON(&discipline)
 	if err != nil {
@@ -86,7 +70,7 @@ func (c *globalController) AddDiscipline(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, discipline)
 }
 
-func (c *globalController) DelDiscipline(ctx *gin.Context) {
+func (c *categoryController) DelDiscipline(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	err := c.service.DelDiscipline(id)
@@ -98,7 +82,7 @@ func (c *globalController) DelDiscipline(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func (c *globalController) AllCategories(ctx *gin.Context) {
+func (c *categoryController) AllCategories(ctx *gin.Context) {
 	categories, err := c.service.AllCategories()
 
 	if err != nil {
@@ -114,7 +98,7 @@ func (c *globalController) AllCategories(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, wrapped)
 }
 
-func (c *globalController) AddCategory(ctx *gin.Context) {
+func (c *categoryController) AddCategory(ctx *gin.Context) {
 	var category *entity.Category
 	err := ctx.ShouldBindJSON(&category)
 	if err != nil {
@@ -132,7 +116,7 @@ func (c *globalController) AddCategory(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, category)
 }
 
-func (c *globalController) DelCategory(ctx *gin.Context) {
+func (c *categoryController) DelCategory(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	err := c.service.DelCategory(id)
@@ -144,7 +128,7 @@ func (c *globalController) DelCategory(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func (c *globalController) AllAgeGroups(ctx *gin.Context) {
+func (c *categoryController) AllAgeGroups(ctx *gin.Context) {
 	ageGroups, err := c.service.AllAgeGroups()
 
 	if err != nil {
@@ -160,7 +144,7 @@ func (c *globalController) AllAgeGroups(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, wrapped)
 }
 
-func (c *globalController) AddAgeGroup(ctx *gin.Context) {
+func (c *categoryController) AddAgeGroup(ctx *gin.Context) {
 	var ageGroup *entity.AgeGroup
 	err := ctx.ShouldBindJSON(&ageGroup)
 	if err != nil {
@@ -178,7 +162,7 @@ func (c *globalController) AddAgeGroup(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, ageGroup)
 }
 
-func (c *globalController) DelAgeGroup(ctx *gin.Context) {
+func (c *categoryController) DelAgeGroup(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	err := c.service.DelAgeGroup(id)
@@ -190,7 +174,7 @@ func (c *globalController) DelAgeGroup(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func (c *globalController) AllGenders(ctx *gin.Context) {
+func (c *categoryController) AllGenders(ctx *gin.Context) {
 	genders, err := c.service.AllGenders()
 
 	if err != nil {
@@ -206,7 +190,7 @@ func (c *globalController) AllGenders(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, wrapped)
 }
 
-func (c *globalController) AddGender(ctx *gin.Context) {
+func (c *categoryController) AddGender(ctx *gin.Context) {
 	var gender *entity.Gender
 	err := ctx.ShouldBindJSON(&gender)
 	if err != nil {
@@ -224,7 +208,7 @@ func (c *globalController) AddGender(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gender)
 }
 
-func (c *globalController) DelGender(ctx *gin.Context) {
+func (c *categoryController) DelGender(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	err := c.service.DelGender(id)
@@ -236,7 +220,7 @@ func (c *globalController) DelGender(ctx *gin.Context) {
 	ctx.Status(http.StatusOK)
 }
 
-func (c *globalController) AllCategoryGroups(ctx *gin.Context) {
+func (c *categoryController) AllCategoryGroups(ctx *gin.Context) {
 	categoryGroups, err := c.service.AllCategoryGroups()
 
 	if err != nil {
