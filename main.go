@@ -50,11 +50,11 @@ func main() {
 	}(db)
 
 	eventRepo := repository.NewMySQLEventRepository(db)
-	globalRepo := repository.NewMySQLGlobalRepository(db)
+	categoryRepo := repository.NewMySQLCategoryRepository(db)
 	eventService := usecases.NewEventService(eventRepo)
-	globalService := usecases.NewGlobalService(globalRepo)
+	categoryService := usecases.NewCategoryService(categoryRepo)
 	eventController := controllers.New(eventService)
-	globalController := controllers.NewGlobalController(globalService)
+	categoryController := controllers.NewCategoryController(categoryService)
 
 	r := gin.New()
 	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
@@ -67,35 +67,17 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
-		//events := v1.Group("/events")
-		/* {
+		events := v1.Group("/events")
+		{
 			events.GET("/", eventController.GetAll)
 			events.POST("/", eventController.CreateEvent)
 			events.GET("/:eventId", eventController.GetEventById)
 
-			events.GET("/disciplines", globalController.AllDisciplines)
-			events.POST("/discipline", globalController.AddDiscipline)
-			events.DELETE("/discipline/:id", globalController.DelDiscipline)
-
-			events.GET("/categories", globalController.AllCategories)
-			events.POST("/category", globalController.AddCategory)
-			events.DELETE("/category/:id", globalController.DelCategory)
-
-			events.GET("/agegroups", globalController.AllAgeGroups)
-			events.POST("/agegroup", globalController.AddAgeGroup)
-			events.DELETE("/agegroup/:id", globalController.DelAgeGroup)
-
-			events.GET("/genders", globalController.AllGenders)
-			events.POST("/gender", globalController.AddGender)
-			events.DELETE("/gender/:id", globalController.DelGender)
-
-			events.GET("/cat-groups", globalController.AllCategoryGroups)
-
 			events.GET("/result/:resultId", eventController.ResultByResultId)
 			events.GET("/results/:eventId", eventController.AllResultsByEventId)
 			events.GET("/athlete/:athleteId/results", eventController.ResultsByAthleteId)
-		} */
-		routes.Categories(v1.Group("/events"), globalController)
+		}
+		routes.Categories(v1.Group("/category"), categoryController)
 	}
 
 	pages := r.Group("/pages")
