@@ -4,7 +4,7 @@ import (
 	"github.com/ParadiseOliver/ScoringSystem/entity"
 )
 
-type GlobalRepository interface {
+type CategoryRepository interface {
 	AllDisciplines() ([]entity.Discipline, error)
 	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
 	DelDiscipline(id string) error
@@ -20,64 +20,64 @@ type GlobalRepository interface {
 	AllCategoryGroups() ([]entity.CategoryGroup, error)
 }
 
-type globalService struct {
-	repo GlobalRepository
+type categoryService struct {
+	repo CategoryRepository
 }
 
-func NewGlobalService(repo GlobalRepository) *globalService {
-	return &globalService{
+func NewCategoryService(repo CategoryRepository) *categoryService {
+	return &categoryService{
 		repo: repo,
 	}
 }
 
-func (service globalService) AllDisciplines() ([]entity.Discipline, error) {
+func (service categoryService) AllDisciplines() ([]entity.Discipline, error) {
 	return service.repo.AllDisciplines()
 }
 
-func (service globalService) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
+func (service categoryService) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
 	return service.repo.AddDiscipline(discipline)
 }
 
-func (service globalService) DelDiscipline(id string) error {
+func (service categoryService) DelDiscipline(id string) error {
 	return service.repo.DelDiscipline(id)
 }
 
-func (service globalService) AllCategories() ([]entity.Category, error) {
+func (service categoryService) AllCategories() ([]entity.Category, error) {
 	return service.repo.AllCategories()
 }
 
-func (service globalService) AddCategory(category *entity.Category) (*entity.Category, error) {
+func (service categoryService) AddCategory(category *entity.Category) (*entity.Category, error) {
 	return service.repo.AddCategory(category)
 }
 
-func (service globalService) DelCategory(id string) error {
+func (service categoryService) DelCategory(id string) error {
 	return service.repo.DelCategory(id)
 }
 
-func (service globalService) AllAgeGroups() ([]entity.AgeGroup, error) {
+func (service categoryService) AllAgeGroups() ([]entity.AgeGroup, error) {
 	return service.repo.AllAgeGroups()
 }
 
-func (service globalService) AddAgeGroup(ageGroup *entity.AgeGroup) (*entity.AgeGroup, error) {
+func (service categoryService) AddAgeGroup(ageGroup *entity.AgeGroup) (*entity.AgeGroup, error) {
 	return service.repo.AddAgeGroup(ageGroup)
 }
 
-func (service globalService) DelAgeGroup(id string) error {
+func (service categoryService) DelAgeGroup(id string) error {
 	return service.repo.DelAgeGroup(id)
 }
 
-func (service globalService) AllGenders() ([]entity.Gender, error) {
+func (service categoryService) AllGenders() ([]entity.Gender, error) {
 	return service.repo.AllGenders()
 }
 
-func (service globalService) AddGender(gender *entity.Gender) (*entity.Gender, error) {
+func (service categoryService) AddGender(gender *entity.Gender) (*entity.Gender, error) {
 	return service.repo.AddGender(gender)
 }
 
-func (service globalService) DelGender(id string) error {
+func (service categoryService) DelGender(id string) error {
 	return service.repo.DelGender(id)
 }
 
-func (service globalService) AllCategoryGroups() ([]entity.CategoryGroup, error) {
+func (service categoryService) AllCategoryGroups() ([]entity.CategoryGroup, error) {
 	return service.repo.AllCategoryGroups()
 }
