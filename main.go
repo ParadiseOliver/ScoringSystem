@@ -77,7 +77,7 @@ func main() {
 
 	pages := r.Group("/pages")
 	{
-		pages.GET("/events", eventController.AllEvents)
+		pages.GET("/events", eventController.EventsPage)
 	}
 
 	r.NoRoute(func(c *gin.Context) {

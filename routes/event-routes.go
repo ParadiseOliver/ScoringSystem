@@ -4,9 +4,9 @@ import "github.com/gin-gonic/gin"
 
 type EventController interface {
 	GetAll(ctx *gin.Context)
-	CreateEvent(ctx *gin.Context)
-	AllEvents(ctx *gin.Context)
 	GetEventById(ctx *gin.Context)
+	CreateEvent(ctx *gin.Context)
+	EventsPage(ctx *gin.Context)
 }
 
 func Events(events *gin.RouterGroup, eventController EventController) {

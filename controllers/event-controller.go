@@ -71,7 +71,7 @@ func (c *eventController) CreateEvent(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, event)
 }
 
-func (c *eventController) AllEvents(ctx *gin.Context) {
+func (c *eventController) EventsPage(ctx *gin.Context) {
 	events, err := c.service.GetAll()
 	if err != nil {
 		log.Printf("Failed to get all events: %v", err) // This would be log.Errorf for example
@@ -82,7 +82,7 @@ func (c *eventController) AllEvents(ctx *gin.Context) {
 		"title":  "Scoring System",
 		"events": events,
 	}
-	ctx.HTML(http.StatusOK, "all_events.html", data)
+	ctx.HTML(http.StatusOK, "allEvents.html", data)
 }
 
 func (c *eventController) GetEventById(ctx *gin.Context) {
