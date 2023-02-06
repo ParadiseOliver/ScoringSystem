@@ -60,12 +60,11 @@ func main() {
 	resultsController := controllers.NewResultsController(resultsService)
 
 	r := gin.New()
-	//r.Use(gin.Recovery(), gin.Logger(), middleware.BasicAuth())
-	//r.Use(gin.Recovery(), gin.Logger(), gindump.Dump())
 
 	r.Static("/css", "./templates/css")
 	r.LoadHTMLGlob("templates/*.html")
 
+	//r.Use(gin.Recovery(), gin.Logger(), gindump.Dump(), middleware.BasicAuth())
 	r.Use(gin.Recovery(), gin.Logger())
 
 	v1 := r.Group("/api/v1")
@@ -77,7 +76,7 @@ func main() {
 
 	pages := r.Group("/pages")
 	{
-		pages.GET("/events", eventController.AllEvents)
+		pages.GET("/events", eventController.EventsPage)
 	}
 
 	r.NoRoute(func(c *gin.Context) {

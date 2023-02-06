@@ -27,10 +27,10 @@ type Category struct {
 }
 
 type AgeGroup struct {
-	ID           string `json:"id"`
-	MinAge       int    `json:"min_age"`
-	MaxAge       int    `json:"max_age"`
-	CategoryName string `json:"category_name"`
+	ID        string `json:"id"`
+	MinAge    int    `json:"min_age"`
+	MaxAge    int    `json:"max_age"`
+	GroupName string `json:"group_name"`
 }
 
 type Gender struct {
