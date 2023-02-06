@@ -9,6 +9,7 @@ import (
 	"github.com/ParadiseOliver/ScoringSystem/config"
 	"github.com/ParadiseOliver/ScoringSystem/controllers"
 	"github.com/ParadiseOliver/ScoringSystem/repository"
+	"github.com/ParadiseOliver/ScoringSystem/routes"
 	"github.com/ParadiseOliver/ScoringSystem/usecases"
 
 	"github.com/gin-gonic/gin"
@@ -66,8 +67,8 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
-		events := v1.Group("/events")
-		{
+		//events := v1.Group("/events")
+		/* {
 			events.GET("/", eventController.GetAll)
 			events.POST("/", eventController.CreateEvent)
 			events.GET("/:eventId", eventController.GetEventById)
@@ -93,7 +94,8 @@ func main() {
 			events.GET("/result/:resultId", eventController.ResultByResultId)
 			events.GET("/results/:eventId", eventController.AllResultsByEventId)
 			events.GET("/athlete/:athleteId/results", eventController.ResultsByAthleteId)
-		}
+		} */
+		routes.Categories(v1.Group("/events"), globalController)
 	}
 
 	pages := r.Group("/pages")

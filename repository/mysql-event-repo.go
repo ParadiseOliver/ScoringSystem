@@ -91,7 +91,7 @@ func (repo *mySqlEventRepository) AllResultsByEventId(id string) ([]entity.Resul
 
 	for res.Next() {
 		var result entity.Result
-		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
+		if err = res.Scan(&result.ID, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
 			panic(err.Error())
 		}
 
@@ -107,7 +107,7 @@ func (repo *mySqlEventRepository) ResultByResultId(id string) (*entity.Result, e
 
 	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE id='%s'", id)
 
-	if err := repo.db.QueryRow(sql).Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
+	if err := repo.db.QueryRow(sql).Scan(&result.ID, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
 		return nil, errors.New("event not found")
 	}
 
@@ -122,12 +122,12 @@ func (repo *mySqlEventRepository) ResultsByAthleteId(id string) ([]entity.Result
 	res, err := repo.db.Query(sql)
 
 	if err != nil {
-		return nil, errors.New("event not found")
+		return nil, errors.New("result not found")
 	}
 
 	for res.Next() {
 		var result entity.Result
-		if err = res.Scan(&result.Id, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
+		if err = res.Scan(&result.ID, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
 			panic(err)
 		}
 
