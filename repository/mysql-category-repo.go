@@ -42,6 +42,16 @@ func (repo *mySqlCategoryRepository) AllDisciplines() ([]entity.Discipline, erro
 	return disciplines, nil
 }
 
+func (repo *mySqlCategoryRepository) Discipline(id string) (*entity.Discipline, error) {
+	var dis entity.Discipline
+
+	if err := repo.db.QueryRow("SELECT disciplines_id, discipline FROM disciplines WHERE disciplines_id = ?", id).Scan(&dis.ID, &dis.Discipline); err != nil {
+		return nil, err
+	}
+
+	return &dis, nil
+}
+
 func (repo *mySqlCategoryRepository) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
 
 	sql := fmt.Sprintf("INSERT INTO disciplines (discipline) VALUES ('%s')", discipline.Discipline)
@@ -96,6 +106,16 @@ func (repo *mySqlCategoryRepository) AllCategories() ([]entity.Category, error) 
 	return categories, nil
 }
 
+func (repo *mySqlCategoryRepository) Category(id string) (*entity.Category, error) {
+	var cat entity.Category
+
+	if err := repo.db.QueryRow("SELECT categories_id, category FROM categories WHERE categories_id = ?", id).Scan(&cat.ID, &cat.Category); err != nil {
+		return nil, err
+	}
+
+	return &cat, nil
+}
+
 func (repo *mySqlCategoryRepository) AddCategory(category *entity.Category) (*entity.Category, error) {
 
 	sql := fmt.Sprintf("INSERT INTO categories (category) VALUES ('%s')", category.Category)
@@ -111,7 +131,7 @@ func (repo *mySqlCategoryRepository) AddCategory(category *entity.Category) (*en
 		return nil, err
 	}
 
-	category.ID = strconv.Itoa(int(lastId)) // Can use RETURNING in sql with sqlc
+	category.ID = strconv.Itoa(int(lastId))
 
 	return category, nil
 }
@@ -140,7 +160,7 @@ func (repo *mySqlCategoryRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 
 	for res.Next() {
 		var ageGroup entity.AgeGroup
-		if err = res.Scan(&ageGroup.ID, &ageGroup.MinAge, &ageGroup.MaxAge, &ageGroup.CategoryName); err != nil {
+		if err = res.Scan(&ageGroup.ID, &ageGroup.MinAge, &ageGroup.MaxAge, &ageGroup.GroupName); err != nil {
 			return nil, err
 		}
 
@@ -150,9 +170,19 @@ func (repo *mySqlCategoryRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 	return ageGroups, nil
 }
 
+func (repo *mySqlCategoryRepository) AgeGroup(id string) (*entity.AgeGroup, error) {
+	var age entity.AgeGroup
+
+	if err := repo.db.QueryRow("SELECT agegroup_id, min_age, max_age, group_name FROM agegroups WHERE agegroup_id = ?", id).Scan(&age.ID, &age.MinAge, &age.MaxAge, &age.GroupName); err != nil {
+		return nil, err
+	}
+
+	return &age, nil
+}
+
 func (repo *mySqlCategoryRepository) AddAgeGroup(ageGroup *entity.AgeGroup) (*entity.AgeGroup, error) {
 
-	sql := fmt.Sprintf("INSERT INTO agegroups (min_age, max_age, group_name) VALUES ('%d', '%d', '%s')", ageGroup.MinAge, ageGroup.MaxAge, ageGroup.CategoryName)
+	sql := fmt.Sprintf("INSERT INTO agegroups (min_age, max_age, group_name) VALUES ('%d', '%d', '%s')", ageGroup.MinAge, ageGroup.MaxAge, ageGroup.GroupName)
 	res, err := repo.db.Exec(sql)
 
 	if err != nil {
@@ -165,7 +195,7 @@ func (repo *mySqlCategoryRepository) AddAgeGroup(ageGroup *entity.AgeGroup) (*en
 		return nil, err
 	}
 
-	ageGroup.ID = strconv.Itoa(int(lastId)) // Can use RETURNING in sql with sqlc
+	ageGroup.ID = strconv.Itoa(int(lastId))
 
 	return ageGroup, nil
 }
@@ -204,6 +234,16 @@ func (repo *mySqlCategoryRepository) AllGenders() ([]entity.Gender, error) {
 	return genders, nil
 }
 
+func (repo *mySqlCategoryRepository) Gender(id string) (*entity.Gender, error) {
+	var gender entity.Gender
+
+	if err := repo.db.QueryRow("SELECT genders_id, gender FROM genders WHERE genders_id = ?", id).Scan(&gender.ID, &gender.Gender); err != nil {
+		return nil, err
+	}
+
+	return &gender, nil
+}
+
 func (repo *mySqlCategoryRepository) AddGender(gender *entity.Gender) (*entity.Gender, error) {
 
 	sql := fmt.Sprintf("INSERT INTO genders (gender) VALUES ('%s')", gender.Gender)
@@ -219,7 +259,7 @@ func (repo *mySqlCategoryRepository) AddGender(gender *entity.Gender) (*entity.G
 		return nil, err
 	}
 
-	gender.ID = strconv.Itoa(int(lastId)) // Can use RETURNING in sql with sqlc
+	gender.ID = strconv.Itoa(int(lastId))
 
 	return gender, nil
 }
@@ -256,4 +296,46 @@ func (repo *mySqlCategoryRepository) AllCategoryGroups() ([]entity.CategoryGroup
 	}
 
 	return categoryGroups, nil
+}
+
+func (repo *mySqlCategoryRepository) CategoryGroup(id string) (*entity.CategoryGroup, error) {
+	var group entity.CategoryGroup
+
+	if err := repo.db.QueryRow("SELECT cat_id, discipline_id, category_id, agegroup_id, gender_id FROM category_groups WHERE cat_id = ?", id).Scan(&group.ID, &group.DisciplineId, &group.CategoryId, &group.AgegroupId, &group.GenderId); err != nil {
+		return nil, err
+	}
+
+	return &group, nil
+}
+
+func (repo *mySqlCategoryRepository) AddCategoryGroup(catGroup *entity.CategoryGroup) (*entity.CategoryGroup, error) {
+	// Want to check if matching row already exists in table.
+	sql := fmt.Sprintf("INSERT INTO category_groups (discipline_id, category_id, agegroup_id, gender_id) VALUES ('%s','%s','%s','%s')", catGroup.DisciplineId, catGroup.CategoryId, catGroup.AgegroupId, catGroup.GenderId)
+	res, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+
+	if err != nil {
+		return nil, err
+	}
+
+	catGroup.ID = strconv.Itoa(int(lastId))
+
+	return catGroup, nil
+}
+
+func (repo *mySqlCategoryRepository) DelCategoryGroup(id string) error {
+
+	sql := fmt.Sprintf("DELETE FROM category_groups WHERE cat_id = '%s'", id)
+	_, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

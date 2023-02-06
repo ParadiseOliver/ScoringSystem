@@ -10,18 +10,25 @@ import (
 
 type CategoryService interface {
 	AllDisciplines() ([]entity.Discipline, error)
+	Discipline(id string) (*entity.Discipline, error)
 	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
 	DelDiscipline(id string) error
 	AllCategories() ([]entity.Category, error)
+	Category(id string) (*entity.Category, error)
 	AddCategory(category *entity.Category) (*entity.Category, error)
 	DelCategory(id string) error
 	AllAgeGroups() ([]entity.AgeGroup, error)
+	AgeGroup(id string) (*entity.AgeGroup, error)
 	AddAgeGroup(ageGroup *entity.AgeGroup) (*entity.AgeGroup, error)
 	DelAgeGroup(id string) error
 	AllGenders() ([]entity.Gender, error)
+	Gender(id string) (*entity.Gender, error)
 	AddGender(gender *entity.Gender) (*entity.Gender, error)
 	DelGender(id string) error
 	AllCategoryGroups() ([]entity.CategoryGroup, error)
+	AddCategoryGroup(catGroup *entity.CategoryGroup) (*entity.CategoryGroup, error)
+	CategoryGroup(id string) (*entity.CategoryGroup, error)
+	DelCategoryGroup(id string) error
 }
 
 type categoryController struct {
@@ -48,6 +55,23 @@ func (c *categoryController) AllDisciplines(ctx *gin.Context) {
 		Fields []entity.Discipline `json:"disciplines"`
 	}{
 		disciplines,
+	}
+	ctx.JSON(http.StatusOK, wrapped)
+}
+
+func (c *categoryController) Discipline(ctx *gin.Context) {
+	id := ctx.Param("id")
+	discipline, err := c.service.Discipline(id)
+
+	if err != nil {
+		log.Printf("Failed to get discipline: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	wrapped := struct {
+		Fields entity.Discipline `json:"discipline"`
+	}{
+		*discipline,
 	}
 	ctx.JSON(http.StatusOK, wrapped)
 }
@@ -98,6 +122,23 @@ func (c *categoryController) AllCategories(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, wrapped)
 }
 
+func (c *categoryController) Category(ctx *gin.Context) {
+	id := ctx.Param("id")
+	cat, err := c.service.Category(id)
+
+	if err != nil {
+		log.Printf("Failed to get category: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	wrapped := struct {
+		Fields entity.Category `json:"category"`
+	}{
+		*cat,
+	}
+	ctx.JSON(http.StatusOK, wrapped)
+}
+
 func (c *categoryController) AddCategory(ctx *gin.Context) {
 	var category *entity.Category
 	err := ctx.ShouldBindJSON(&category)
@@ -140,6 +181,23 @@ func (c *categoryController) AllAgeGroups(ctx *gin.Context) {
 		Fields []entity.AgeGroup `json:"agegroups"`
 	}{
 		ageGroups,
+	}
+	ctx.JSON(http.StatusOK, wrapped)
+}
+
+func (c *categoryController) AgeGroup(ctx *gin.Context) {
+	id := ctx.Param("id")
+	age, err := c.service.AgeGroup(id)
+
+	if err != nil {
+		log.Printf("Failed to get agegroup: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	wrapped := struct {
+		Fields entity.AgeGroup `json:"agegroup"`
+	}{
+		*age,
 	}
 	ctx.JSON(http.StatusOK, wrapped)
 }
@@ -190,6 +248,23 @@ func (c *categoryController) AllGenders(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, wrapped)
 }
 
+func (c *categoryController) Gender(ctx *gin.Context) {
+	id := ctx.Param("id")
+	gender, err := c.service.Gender(id)
+
+	if err != nil {
+		log.Printf("Failed to get gender: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	wrapped := struct {
+		Fields entity.Gender `json:"gender"`
+	}{
+		*gender,
+	}
+	ctx.JSON(http.StatusOK, wrapped)
+}
+
 func (c *categoryController) AddGender(ctx *gin.Context) {
 	var gender *entity.Gender
 	err := ctx.ShouldBindJSON(&gender)
@@ -234,4 +309,51 @@ func (c *categoryController) AllCategoryGroups(ctx *gin.Context) {
 		categoryGroups,
 	}
 	ctx.JSON(http.StatusOK, wrapped)
+}
+
+func (c *categoryController) CategoryGroup(ctx *gin.Context) {
+	id := ctx.Param("id")
+	categoryGroup, err := c.service.CategoryGroup(id)
+
+	if err != nil {
+		log.Printf("Failed to get category group: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	wrapped := struct {
+		Fields entity.CategoryGroup `json:"category_group"`
+	}{
+		*categoryGroup,
+	}
+	ctx.JSON(http.StatusOK, wrapped)
+}
+
+func (c *categoryController) DelCategoryGroup(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	err := c.service.DelCategoryGroup(id)
+	if err != nil {
+		log.Printf("Failed to delete category group: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	ctx.Status(http.StatusOK)
+}
+
+func (c *categoryController) AddCategoryGroup(ctx *gin.Context) {
+	var catGroup *entity.CategoryGroup
+	err := ctx.ShouldBindJSON(&catGroup)
+	if err != nil {
+		log.Printf("Failed to bind gender: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	catGroup, err = c.service.AddCategoryGroup(catGroup)
+	if err != nil {
+		log.Printf("Failed to add gender: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	ctx.JSON(http.StatusOK, catGroup)
 }
