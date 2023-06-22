@@ -93,3 +93,18 @@ func (c *eventController) GetEventById(ctx *gin.Context) {
 	}
 	ctx.JSON(http.StatusOK, event)
 }
+
+func (c *eventController) EventPage(ctx *gin.Context) {
+	id := ctx.Param("eventId")
+	event, err := c.service.GetEventById(id)
+	if err != nil {
+		log.Printf("Failed to get event: %v", err) // This would be log.Errorf for example
+		ctx.Status(http.StatusInternalServerError) // Status 500 because we don't want to expose our internal workings to a bad actor.
+		return                                     // Return so we don't try and continue with the rest of the logic..
+	}
+	data := gin.H{
+		"title": "Scoring System",
+		"event": event,
+	}
+	ctx.HTML(http.StatusOK, "event.html", data)
+}

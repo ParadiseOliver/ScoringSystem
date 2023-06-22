@@ -1,0 +1,13 @@
+{{ template "header.html"}}
+    <header>
+        <h1><a href="/">{{ .title }}</a></h1>
+    </header>
+    <h2>Single Event</h2>
+    <div class="event">
+
+        <div id="{{ .event.ID }}">
+            <h5>{{ .event.Name }}</h5>
+        </div>
+
+    </div>
+    {{ template "footer.html"}}

@@ -7,6 +7,7 @@ type EventController interface {
 	GetEventById(ctx *gin.Context)
 	CreateEvent(ctx *gin.Context)
 	EventsPage(ctx *gin.Context)
+	EventPage(ctx *gin.Context)
 }
 
 func Events(events *gin.RouterGroup, eventController EventController) {

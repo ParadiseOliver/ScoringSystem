@@ -5,7 +5,7 @@
     <h2>All Events</h2>
     <div class="events">
         {{ range .events }}
-        <div id="{{ .ID }}"><a href="">  
+        <div id="{{ .ID }}"><a href="/pages/events/{{ .ID }}">  
             <h5>{{ .Name }}</h5>
             <img>
             <h6>{{ .StartDate }} to {{ .EndDate}}</h6>

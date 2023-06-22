@@ -12,6 +12,7 @@ type CategoryService interface {
 	AllDisciplines() ([]entity.Discipline, error)
 	Discipline(id string) (*entity.Discipline, error)
 	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
+	UpdateDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
 	DelDiscipline(id string) error
 	AllCategories() ([]entity.Category, error)
 	Category(id string) (*entity.Category, error)
@@ -88,6 +89,24 @@ func (c *categoryController) AddDiscipline(ctx *gin.Context) {
 	discipline, err = c.service.AddDiscipline(discipline)
 	if err != nil {
 		log.Printf("Failed to add discipline: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	ctx.JSON(http.StatusOK, discipline)
+}
+
+func (c *categoryController) UpdateDiscipline(ctx *gin.Context) {
+	var discipline *entity.Discipline
+	err := ctx.ShouldBindJSON(&discipline)
+	if err != nil {
+		log.Printf("Failed to bind discipline: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	discipline, err = c.service.UpdateDiscipline(discipline)
+	if err != nil {
+		log.Printf("Failed to update discipline: %v", err)
 		ctx.Status(http.StatusInternalServerError)
 		return
 	}

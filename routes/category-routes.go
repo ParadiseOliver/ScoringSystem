@@ -8,6 +8,7 @@ type CategoryController interface {
 	AllDisciplines(ctx *gin.Context)
 	Discipline(ctx *gin.Context)
 	AddDiscipline(ctx *gin.Context)
+	UpdateDiscipline(ctx *gin.Context)
 	DelDiscipline(ctx *gin.Context)
 	AllCategories(ctx *gin.Context)
 	Category(ctx *gin.Context)
@@ -31,6 +32,7 @@ func Categories(category *gin.RouterGroup, categoryController CategoryController
 
 	category.GET("/disciplines", categoryController.AllDisciplines)
 	category.GET("/discipline/:id", categoryController.Discipline)
+	category.PUT("/discipline", categoryController.UpdateDiscipline)
 	category.POST("/discipline", categoryController.AddDiscipline)
 	category.DELETE("/discipline/:id", categoryController.DelDiscipline)
 
