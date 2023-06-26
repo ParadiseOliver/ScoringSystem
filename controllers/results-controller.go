@@ -113,6 +113,9 @@ func (c *resultsController) ScoreAthlete(ctx *gin.Context) {
 		ctx.Status(http.StatusInternalServerError)
 		return
 	}
+
+	score.Total = score.E1 + score.E2 + score.HD + score.DD + score.Tof - score.Pen // Just summing first 2 E scores rather than median currently.
+
 	var result *entity.Result
 	result, err = c.service.ScoreAthlete(eventId, athleteId, score)
 
