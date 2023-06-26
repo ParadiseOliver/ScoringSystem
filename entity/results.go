@@ -22,6 +22,7 @@ type TriScore struct {
 	E4            string   `json:"e4" form:"e4"`
 	HD            []string `json:"hd"`
 	DD            string   `json:"dd" form:"dd"`
+	Tof           string   `json:"tof" form:"tof"`
 	Pen           string   `json:"penalty" form:"penalty"`
 	Total         string   `json:"total"`
 	Position      int      `json:"position"`

@@ -94,7 +94,7 @@ func (repo *mySqlResultsRepository) UserByUserId(id string) (*entity.User, error
 
 func (repo *mySqlResultsRepository) ScoreAthlete(eventId, athleteId int, score *entity.TriScore) (*entity.Result, error) {
 
-	sql := fmt.Sprintf("INSERT INTO results (event_id, athlete_id, club_id, category_id, routine, E1, E2, E3, E4, DD, Pen) VALUES ('%d', '%d', '1', '1', '1', '%s', '%s', '%s', '%s', '%s', '%s')", eventId, athleteId, score.E1, score.E2, score.E3, score.E4, score.DD, score.Pen)
+	sql := fmt.Sprintf("INSERT INTO results (event_id, athlete_id, club_id, category_id, routine, E1, E2, E3, E4, DD, Tof, Pen) VALUES ('%d', '%d', '1', '1', '1', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", eventId, athleteId, score.E1, score.E2, score.E3, score.E4, score.DD, score.Tof, score.Pen)
 	res, err := repo.db.Exec(sql)
 
 	if err != nil {
