@@ -24,7 +24,7 @@ func (repo *mySqlResultsRepository) AllResultsByEventId(id string) ([]entity.Res
 
 	var results []entity.Result
 
-	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE event_id = '%s'", id)
+	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, score FROM results_1 WHERE event_id = '%s'", id)
 	res, err := repo.db.Query(sql)
 
 	if err != nil {
@@ -33,7 +33,7 @@ func (repo *mySqlResultsRepository) AllResultsByEventId(id string) ([]entity.Res
 
 	for res.Next() {
 		var result entity.Result
-		if err = res.Scan(&result.ID, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
+		if err = res.Scan(&result.ID, &result.EventID, &result.Athlete, &result.Club, &result.CategoryGroup, &result.Score); err != nil {
 			panic(err.Error())
 		}
 
@@ -47,9 +47,9 @@ func (repo *mySqlResultsRepository) ResultByResultId(id string) (*entity.Result,
 
 	var result entity.Result
 
-	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE id='%s'", id)
+	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, score FROM results_1 WHERE id='%s'", id)
 
-	if err := repo.db.QueryRow(sql).Scan(&result.ID, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
+	if err := repo.db.QueryRow(sql).Scan(&result.ID, &result.EventID, &result.Athlete, &result.Club, &result.CategoryGroup, &result.Score); err != nil {
 		return nil, errors.New("event not found")
 	}
 
@@ -60,7 +60,7 @@ func (repo *mySqlResultsRepository) ResultsByAthleteId(id string) ([]entity.Resu
 
 	var results []entity.Result
 
-	sql := fmt.Sprintf("SELECT id, athlete_id, club_id, category_id, agegroup_id, score FROM results_1 WHERE athlete_id = '%s'", id)
+	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, score FROM results_1 WHERE athlete_id = '%s'", id)
 	res, err := repo.db.Query(sql)
 
 	if err != nil {
@@ -69,7 +69,7 @@ func (repo *mySqlResultsRepository) ResultsByAthleteId(id string) ([]entity.Resu
 
 	for res.Next() {
 		var result entity.Result
-		if err = res.Scan(&result.ID, &result.Athlete, &result.Club, &result.Category, &result.Agegroup, &result.Score); err != nil {
+		if err = res.Scan(&result.ID, &result.EventID, &result.Athlete, &result.Club, &result.CategoryGroup, &result.Score); err != nil {
 			panic(err)
 		}
 
@@ -77,4 +77,17 @@ func (repo *mySqlResultsRepository) ResultsByAthleteId(id string) ([]entity.Resu
 	}
 
 	return results, nil
+}
+
+func (repo *mySqlResultsRepository) UserByUserId(id string) (*entity.User, error) {
+
+	var user entity.User
+
+	sql := fmt.Sprintf("SELECT id, first_name, surname, club_ID, gender FROM users WHERE id='%s'", id)
+
+	if err := repo.db.QueryRow(sql).Scan(&user.ID, &user.FirstName, &user.Surname, &user.Club, &user.Gender); err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	return &user, nil
 }

@@ -8,6 +8,7 @@ type CategoryRepository interface {
 	AllDisciplines() ([]entity.Discipline, error)
 	Discipline(id string) (*entity.Discipline, error)
 	AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
+	UpdateDiscipline(discipline *entity.Discipline) (*entity.Discipline, error)
 	DelDiscipline(id string) error
 	AllCategories() ([]entity.Category, error)
 	Category(id string) (*entity.Category, error)
@@ -47,6 +48,10 @@ func (service categoryService) Discipline(id string) (*entity.Discipline, error)
 
 func (service categoryService) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
 	return service.repo.AddDiscipline(discipline)
+}
+
+func (service categoryService) UpdateDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
+	return service.repo.UpdateDiscipline(discipline)
 }
 
 func (service categoryService) DelDiscipline(id string) error {

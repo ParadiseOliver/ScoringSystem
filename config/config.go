@@ -27,7 +27,7 @@ func MyPort() (string, error) {
 }
 
 func Connectdb() (*sql.DB, error) {
-	path := os.Getenv("DB_URL") + os.Getenv("DB_NAME")
+	path := os.Getenv("DB_URL") + os.Getenv("DB_NAME") + "?parseTime=true"
 	db, errdb := sql.Open(os.Getenv("DB_TYPE"), path)
 	if errdb != nil {
 		return nil, errdb

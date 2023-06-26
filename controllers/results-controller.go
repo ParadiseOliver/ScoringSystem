@@ -11,6 +11,7 @@ type ResultsService interface {
 	AllResultsByEventId(id string) ([]entity.Result, error)
 	ResultByResultId(id string) (*entity.Result, error)
 	ResultsByAthleteId(id string) ([]entity.Result, error)
+	UserByUserId(id string) (*entity.User, error)
 }
 
 type resultsController struct {
@@ -71,4 +72,18 @@ func (c *resultsController) ResultsByAthleteId(ctx *gin.Context) {
 		results,
 	}
 	ctx.JSON(http.StatusOK, wrapped)
+}
+
+func (c *resultsController) UserByUserId(ctx *gin.Context) {
+	id := ctx.Param("athleteId")
+	user, err := c.service.UserByUserId(id)
+
+	if err != nil {
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	data := gin.H{
+		"user": user,
+	}
+	ctx.HTML(http.StatusOK, "score.html", data)
 }

@@ -72,6 +72,18 @@ func (repo *mySqlCategoryRepository) AddDiscipline(discipline *entity.Discipline
 	return discipline, nil
 }
 
+func (repo *mySqlCategoryRepository) UpdateDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
+
+	sql := fmt.Sprintf("UPDATE disciplines SET discipline = '%s' WHERE disciplines_id = '%s'", discipline.Discipline, discipline.ID)
+	_, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return discipline, err
+	}
+
+	return discipline, nil
+}
+
 func (repo *mySqlCategoryRepository) DelDiscipline(id string) error {
 
 	sql := fmt.Sprintf("DELETE FROM disciplines WHERE disciplines_id = '%s'", id)

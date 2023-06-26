@@ -1,0 +1,9 @@
+{{ template "header.html"}}
+    <h2>{{ .event.Name }}</h2>
+    <div class="event">
+        <div id="{{ .event.ID }}">
+            <h5>Starts: {{ .event.StartDate.Format "01/02/2006" }}</h5>
+            <h5>Ends: {{ .event.EndDate.Format "01/02/2006" }}</h5>
+        </div>
+    </div>
+{{ template "footer.html"}}

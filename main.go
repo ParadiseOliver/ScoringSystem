@@ -33,22 +33,26 @@ func main() {
 	defer logger.Sync()
 	//sugar := logger.Sugar()
 
+	// Load all environment variables.
 	config.LoadEnvVariables()
 
+	// Create connection to db.
 	db, err := config.Connectdb()
 
 	if err != nil {
-		log.Printf("Failed to open db connection: %v", err)
+		logger.Sugar().Fatalf("Failed to open db connection: %v", err)
 	}
 
+	// Close connection to db.
 	defer func(*sql.DB) {
 		err := db.Close()
 		if err != nil {
 
-			log.Printf("Failed to close db connection: %v", err)
+			logger.Sugar().Fatalf("Failed to close db connection: %v", err)
 		}
 	}(db)
 
+	// Declare repos, services and controllers.
 	eventRepo := repository.NewMySQLEventRepository(db)
 	categoryRepo := repository.NewMySQLCategoryRepository(db)
 	resultsRepo := repository.NewMySQLResultsRepository(db)
@@ -59,6 +63,7 @@ func main() {
 	categoryController := controllers.NewCategoryController(categoryService)
 	resultsController := controllers.NewResultsController(resultsService)
 
+	// Define gin server.
 	r := gin.New()
 
 	r.Static("/css", "./templates/css")
@@ -67,6 +72,8 @@ func main() {
 	//r.Use(gin.Recovery(), gin.Logger(), gindump.Dump(), middleware.BasicAuth())
 	r.Use(gin.Recovery(), gin.Logger())
 
+	// Group of all api v1 endpoints. Should it be a group for all api and a sub group for v1?
+
 	v1 := r.Group("/api/v1")
 	{
 		routes.Events(v1.Group("/events"), eventController)
@@ -74,9 +81,21 @@ func main() {
 		routes.Results(v1.Group("/results"), resultsController)
 	}
 
+	// Routes for html pages to display.
 	pages := r.Group("/pages")
 	{
+		// Endpoint for home page.
+		pages.GET("/", eventController.HomePage)
+		// Endpoint for All Events page.
 		pages.GET("/events", eventController.EventsPage)
+		events := pages.Group("/events")
+		{
+			// Endpoint for individual event pages.
+			events.GET("/:eventId", eventController.EventPage)
+		}
+		// Endpoint for score page
+		pages.GET("/score/:athleteId", resultsController.UserByUserId) //add new route for score page
+
 	}
 
 	r.NoRoute(func(c *gin.Context) {
