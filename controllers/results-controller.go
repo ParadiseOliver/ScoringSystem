@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/ParadiseOliver/ScoringSystem/entity"
 	"github.com/gin-gonic/gin"
@@ -12,6 +14,7 @@ type ResultsService interface {
 	ResultByResultId(id string) (*entity.Result, error)
 	ResultsByAthleteId(id string) ([]entity.Result, error)
 	UserByUserId(id string) (*entity.User, error)
+	ScoreAthlete(eventId, athleteId int, score *entity.TriScore) (*entity.Result, error)
 }
 
 type resultsController struct {
@@ -86,4 +89,42 @@ func (c *resultsController) UserByUserId(ctx *gin.Context) {
 		"user": user,
 	}
 	ctx.HTML(http.StatusOK, "score.html", data)
+}
+
+func (c *resultsController) ScoreAthlete(ctx *gin.Context) {
+	eventId, err := strconv.Atoi(ctx.Param("eventId"))
+	if err != nil {
+		log.Printf("Failed to get eventID: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	athleteId, err := strconv.Atoi(ctx.Param("athleteId"))
+	if err != nil {
+		log.Printf("Failed to add athleteID: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+
+	var score *entity.TriScore
+	err = ctx.ShouldBind(&score)
+	if err != nil {
+		log.Printf("Failed to bind score: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	var result *entity.Result
+	result, err = c.service.ScoreAthlete(eventId, athleteId, score)
+
+	if err != nil {
+		log.Printf("Failed to add score: %v", err)
+		ctx.Status(http.StatusInternalServerError)
+		return
+	}
+	wrapped := struct {
+		Fields entity.Result `json:"score"`
+	}{
+		*result,
+	}
+	ctx.JSON(http.StatusOK, wrapped)
 }

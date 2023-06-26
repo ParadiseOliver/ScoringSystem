@@ -1,14 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Scoring System</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> </head>
-
-</head>
-<body>
-    <header>
-        <h1><a href="/">Tramp Score</a></h1>
-    </header>
+{{ template "header.html" }}
     <div style="padding-left: 5%;">
         <h1>Create New Competition</h1>
         <form method="POST" action="/events">
@@ -92,5 +82,4 @@
             </div>
         </form>
     </div>
-</body>
-</html>
+{{ template "footer.html" }}

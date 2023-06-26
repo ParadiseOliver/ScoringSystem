@@ -1,29 +1,30 @@
 {{ template "header.html"}}
     <div>
         <h1>Scores for {{ .user.FirstName }} {{ .user.Surname }}</h1>
-        <form>
+        <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+        <form method="POST" action="/api/v1/results/score/1/{{ .user.ID }}" target="dummyframe">
             <div class="form-row">
                 <div class="form-group col-md-2">
                     <label for="e1">Execution 1: </label>
-                    <input required class="form-control" type="number" id="e1" placeholder="E1">
+                    <input required class="form-control" type="number" name="e1" id="e1" placeholder="E1">
                 </div>
                 <div class="form-group col-md-2">
                     <label for="e2">Execution 2: </label>
-                    <input required class="form-control" type="number" id="e2" placeholder="E2">
+                    <input required class="form-control" type="number" name="e2" id="e2" placeholder="E2">
                 </div>
                 <div class="form-group col-md-2">
                     <label for="e1">Execution 3: </label>
-                    <input required class="form-control" type="number" id="e3" placeholder="E3">
+                    <input required class="form-control" type="number" name="e3" id="e3" placeholder="E3">
                 </div>
                 <div class="form-group col-md-2">
                     <label for="e1">Execution 4: </label>
-                    <input required class="form-control" type="number" id="e4" placeholder="E4">
+                    <input required class="form-control" type="number" name="e4" id="e4" placeholder="E4">
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-2">
                     <label for="dd">Difficulty: </label>
-                    <input required class="form-control" type="number" id="dd" placeholder="DD">
+                    <input required class="form-control" type="number" name="dd" id="dd" placeholder="DD">
                 </div>
                 <div class="form-group col-md-2">
                     <label for="tof">Time of Flight: </label>
@@ -31,13 +32,15 @@
                 </div>
                 <div class="form-group col-md-2"> 
                     <label for="pen">Penalties: </label>
-                    <input class="form-control" type="number" id="pen" placeholder="Penalty">
+                    <input class="form-control" type="number" name="penalty" id="pen" placeholder="Penalty">
                 </div>
             </div>
+            <br>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <button type="submit" class="btn btn-primary">Submit Scores</button>
                 </div>
+                <br>
                 <div class="form-group col-md-6">
                     <button type="submit" class="btn btn-primary">Next Competitor</button> 
                 </div>

@@ -24,7 +24,7 @@ func (repo *mySqlResultsRepository) AllResultsByEventId(id string) ([]entity.Res
 
 	var results []entity.Result
 
-	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, score FROM results_1 WHERE event_id = '%s'", id)
+	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, score FROM results WHERE event_id = '%s'", id)
 	res, err := repo.db.Query(sql)
 
 	if err != nil {
@@ -47,7 +47,7 @@ func (repo *mySqlResultsRepository) ResultByResultId(id string) (*entity.Result,
 
 	var result entity.Result
 
-	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, score FROM results_1 WHERE id='%s'", id)
+	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, score FROM results WHERE id='%s'", id)
 
 	if err := repo.db.QueryRow(sql).Scan(&result.ID, &result.EventID, &result.Athlete, &result.Club, &result.CategoryGroup, &result.Score); err != nil {
 		return nil, errors.New("event not found")
@@ -60,7 +60,7 @@ func (repo *mySqlResultsRepository) ResultsByAthleteId(id string) ([]entity.Resu
 
 	var results []entity.Result
 
-	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, score FROM results_1 WHERE athlete_id = '%s'", id)
+	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, score FROM results WHERE athlete_id = '%s'", id)
 	res, err := repo.db.Query(sql)
 
 	if err != nil {
@@ -90,4 +90,29 @@ func (repo *mySqlResultsRepository) UserByUserId(id string) (*entity.User, error
 	}
 
 	return &user, nil
+}
+
+func (repo *mySqlResultsRepository) ScoreAthlete(eventId, athleteId int, score *entity.TriScore) (*entity.Result, error) {
+
+	sql := fmt.Sprintf("INSERT INTO results (event_id, athlete_id, club_id, category_id, routine, E1, E2, E3, E4, DD, Pen) VALUES ('%d', '%d', '1', '1', '1', '%s', '%s', '%s', '%s', '%s', '%s')", eventId, athleteId, score.E1, score.E2, score.E3, score.E4, score.DD, score.Pen)
+	res, err := repo.db.Exec(sql)
+
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var result entity.Result
+
+	sql = fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, E1 FROM results WHERE id='%d'", int(lastId))
+	if err := repo.db.QueryRow(sql).Scan(&result.ID, &result.EventID, &result.Athlete, &result.Club, &result.CategoryGroup, &result.Score); err != nil {
+		return nil, errors.New("result not found")
+	}
+
+	return &result, nil
 }
