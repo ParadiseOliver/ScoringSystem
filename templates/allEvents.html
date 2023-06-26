@@ -1,15 +1,11 @@
 {{ template "header.html"}}
-    <header>
-        <h1><a href="/">{{ .title }}</a></h1>
-    </header>
     <h2>All Events</h2>
     <div class="events">
         {{ range .events }}
         <div id="{{ .ID }}"><a href="/pages/events/{{ .ID }}">  
             <h5>{{ .Name }}</h5>
-            <img>
-            <h6>{{ .StartDate }} to {{ .EndDate}}</h6>
+            <h6>{{ .StartDate.Format "01/02/2006" }} to {{ .EndDate.Format "01/02/2006"}}</h6>
         </div></a>
         {{ end }}
     </div>
-    {{ template "footer.html"}}
+{{ template "footer.html"}}

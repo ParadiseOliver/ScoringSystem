@@ -25,7 +25,7 @@ func (repo *mySqlEventRepository) FindAll() ([]entity.Event, error) {
 
 	var events []entity.Event
 
-	res, err := repo.db.Query("SELECT id, name FROM events")
+	res, err := repo.db.Query("SELECT id, name, start_date, end_date, is_private FROM events")
 
 	if err != nil {
 		return nil, err
@@ -37,7 +37,7 @@ func (repo *mySqlEventRepository) FindAll() ([]entity.Event, error) {
 
 		var event entity.Event
 
-		if err = res.Scan(&event.ID, &event.Name); err != nil {
+		if err = res.Scan(&event.ID, &event.Name, &event.StartDate, &event.EndDate, &event.IsPrivate); err != nil {
 			return nil, err
 		}
 
@@ -70,7 +70,7 @@ func (repo *mySqlEventRepository) EventById(id string) (*entity.Event, error) {
 
 	var event entity.Event
 
-	if err := repo.db.QueryRow("SELECT id, name, is_private FROM events WHERE ID = ?", id).Scan(&event.ID, &event.Name, &event.IsPrivate); err != nil {
+	if err := repo.db.QueryRow("SELECT id, name, start_date, end_date, is_private FROM events WHERE ID = ?", id).Scan(&event.ID, &event.Name, &event.StartDate, &event.EndDate, &event.IsPrivate); err != nil {
 		return nil, err
 	}
 

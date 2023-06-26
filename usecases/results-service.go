@@ -6,6 +6,7 @@ type ResultsRepository interface {
 	AllResultsByEventId(id string) ([]entity.Result, error)
 	ResultByResultId(id string) (*entity.Result, error)
 	ResultsByAthleteId(id string) ([]entity.Result, error)
+	UserByUserId(id string) (*entity.User, error)
 }
 
 type resultsService struct {
@@ -28,4 +29,8 @@ func (service resultsService) ResultByResultId(id string) (*entity.Result, error
 
 func (service resultsService) ResultsByAthleteId(id string) ([]entity.Result, error) {
 	return service.repo.ResultsByAthleteId(id)
+}
+
+func (service resultsService) UserByUserId(id string) (*entity.User, error) {
+	return service.repo.UserByUserId(id)
 }

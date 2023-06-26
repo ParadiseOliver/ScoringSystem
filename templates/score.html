@@ -1,16 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Scoring System</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> </head>
-
-</head>
-<body>
-    <header>
-        <h1><a href="http://127.0.0.1:5500/pages/index.html">Tramp Score</a></h1>
-    </header>
+{{ template "header.html"}}
     <div>
-        <h1>Scores for </h1>
+        <h1>Scores for {{ .user.FirstName }} {{ .user.Surname }}</h1>
         <form>
             <div class="form-row">
                 <div class="form-group col-md-2">
@@ -49,10 +39,9 @@
                     <button type="submit" class="btn btn-primary">Submit Scores</button>
                 </div>
                 <div class="form-group col-md-6">
-                    <button type="submit" class="btn btn-primary">Next Competitor</button>
+                    <button type="submit" class="btn btn-primary">Next Competitor</button> 
                 </div>
             </div>
         </form>
     </div>
-</body>
-</html>
+{{template "footer.html"}}

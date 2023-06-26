@@ -78,3 +78,16 @@ func (repo *mySqlResultsRepository) ResultsByAthleteId(id string) ([]entity.Resu
 
 	return results, nil
 }
+
+func (repo *mySqlResultsRepository) UserByUserId(id string) (*entity.User, error) {
+
+	var user entity.User
+
+	sql := fmt.Sprintf("SELECT id, first_name, surname, club_ID, gender FROM users WHERE id='%s'", id)
+
+	if err := repo.db.QueryRow(sql).Scan(&user.ID, &user.FirstName, &user.Surname, &user.Club, &user.Gender); err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	return &user, nil
+}

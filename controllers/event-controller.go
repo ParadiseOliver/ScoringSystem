@@ -36,6 +36,10 @@ func NewEventController(service EventService) *eventController {
 	}
 }
 
+func (c *eventController) HomePage(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "index.html", ctx)
+}
+
 func (c *eventController) GetAll(ctx *gin.Context) {
 	events, err := c.service.GetAll()
 	if err != nil {

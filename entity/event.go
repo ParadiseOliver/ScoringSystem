@@ -7,7 +7,7 @@ type Event struct {
 	ID             string          `json:"id"`
 	Name           string          `json:"name" binding:"required"`
 	StartDate      time.Time       `json:"start_date"`
-	EndDate        string          `json:"end_date"`
+	EndDate        time.Time       `json:"end_date"`
 	EntryDeadline  time.Time       `json:"entry_deadline"`
 	IsPrivate      bool            `json:"is_private"`
 	Disciplines    []string        `json:"disciplines"`

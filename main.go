@@ -73,6 +73,7 @@ func main() {
 	r.Use(gin.Recovery(), gin.Logger())
 
 	// Group of all api v1 endpoints. Should it be a group for all api and a sub group for v1?
+
 	v1 := r.Group("/api/v1")
 	{
 		routes.Events(v1.Group("/events"), eventController)
@@ -83,6 +84,8 @@ func main() {
 	// Routes for html pages to display.
 	pages := r.Group("/pages")
 	{
+		// Endpoint for home page.
+		pages.GET("/", eventController.HomePage)
 		// Endpoint for All Events page.
 		pages.GET("/events", eventController.EventsPage)
 		events := pages.Group("/events")
@@ -90,6 +93,9 @@ func main() {
 			// Endpoint for individual event pages.
 			events.GET("/:eventId", eventController.EventPage)
 		}
+		// Endpoint for score page
+		pages.GET("/score/:athleteId", resultsController.UserByUserId) //add new route for score page
+
 	}
 
 	r.NoRoute(func(c *gin.Context) {
