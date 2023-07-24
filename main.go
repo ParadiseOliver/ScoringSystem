@@ -62,11 +62,13 @@ func main() {
 	eventController := controllers.NewEventController(eventService)
 	categoryController := controllers.NewCategoryController(categoryService)
 	resultsController := controllers.NewResultsController(resultsService)
+	pageController := controllers.NewPageController()
 
 	// Define gin server.
 	r := gin.New()
 
 	r.Static("/css", "./templates/css")
+	r.Static("/js", "./templates/js")
 	r.LoadHTMLGlob("templates/*.html")
 
 	//r.Use(gin.Recovery(), gin.Logger(), gindump.Dump(), middleware.BasicAuth())
@@ -82,21 +84,7 @@ func main() {
 	}
 
 	// Routes for html pages to display.
-	pages := r.Group("/pages")
-	{
-		// Endpoint for home page.
-		pages.GET("/", eventController.HomePage)
-		// Endpoint for All Events page.
-		pages.GET("/events", eventController.EventsPage)
-		events := pages.Group("/events")
-		{
-			// Endpoint for individual event pages.
-			events.GET("/:eventId", eventController.EventPage)
-		}
-		// Endpoint for score page
-		pages.GET("/score/:athleteId", resultsController.UserByUserId) //add new route for score page
-
-	}
+	routes.Pages(r.Group("/pages"), pageController)
 
 	r.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"message": "Not found"})
