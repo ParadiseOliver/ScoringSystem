@@ -31,25 +31,17 @@ func (c *pageController) HomePage(ctx *gin.Context) {
 }
 
 func (c *pageController) EventsPage(ctx *gin.Context) {
-
-	data := gin.H{
-		"title": "Scoring System",
-	}
-	ctx.HTML(http.StatusOK, "allEvents.html", data)
+	ctx.HTML(http.StatusOK, "allEvents.html", ctx)
 }
 
 func (c *pageController) EventPage(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "event.html", ctx)
+}
 
-	data := gin.H{
-		"title": "Scoring System",
-	}
-	ctx.HTML(http.StatusOK, "event.html", data)
+func (c *pageController) ScoreHomePage(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "scoreHome.html", ctx)
 }
 
 func (c *pageController) ScorePage(ctx *gin.Context) {
-
-	data := gin.H{
-		"title": "Scoring System",
-	}
-	ctx.HTML(http.StatusOK, "scoreHome.html", data)
+	ctx.HTML(http.StatusOK, "scoreEvent.html", ctx)
 }

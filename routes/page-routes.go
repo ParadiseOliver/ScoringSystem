@@ -4,9 +4,10 @@ import "github.com/gin-gonic/gin"
 
 type PageController interface {
 	HomePage(ctx *gin.Context)
-	ScorePage(ctx *gin.Context)
 	EventsPage(ctx *gin.Context)
 	EventPage(ctx *gin.Context)
+	ScoreHomePage(ctx *gin.Context)
+	ScorePage(ctx *gin.Context)
 }
 
 func Pages(pages *gin.RouterGroup, pageController PageController) {
@@ -19,6 +20,7 @@ func Pages(pages *gin.RouterGroup, pageController PageController) {
 		events.GET("/:eventId", pageController.EventPage)
 	}
 	// Endpoint for score page
-	pages.GET("/score", pageController.ScorePage)
-	//pages.GET("/score/:eventId", resultsController.UserByUserId)
+	pages.GET("/score", pageController.ScoreHomePage)
+
+	pages.GET("/score/:eventId", pageController.ScorePage)
 }
