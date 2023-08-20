@@ -22,7 +22,7 @@ func NewMySQLCategoryRepository(db *sql.DB) *mySqlCategoryRepository {
 
 func (repo *mySqlCategoryRepository) AllDisciplines() ([]entity.Discipline, error) {
 
-	res, err := repo.db.Query("SELECT disciplines_id, discipline FROM disciplines")
+	res, err := repo.db.Query("SELECT id, discipline FROM discipline")
 
 	if err != nil {
 		return nil, err
@@ -45,7 +45,7 @@ func (repo *mySqlCategoryRepository) AllDisciplines() ([]entity.Discipline, erro
 func (repo *mySqlCategoryRepository) Discipline(id string) (*entity.Discipline, error) {
 	var dis entity.Discipline
 
-	if err := repo.db.QueryRow("SELECT disciplines_id, discipline FROM disciplines WHERE disciplines_id = ?", id).Scan(&dis.ID, &dis.Discipline); err != nil {
+	if err := repo.db.QueryRow("SELECT id, discipline FROM discipline WHERE id = ?", id).Scan(&dis.ID, &dis.Discipline); err != nil {
 		return nil, err
 	}
 
@@ -54,7 +54,7 @@ func (repo *mySqlCategoryRepository) Discipline(id string) (*entity.Discipline, 
 
 func (repo *mySqlCategoryRepository) AddDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
 
-	sql := fmt.Sprintf("INSERT INTO disciplines (discipline) VALUES ('%s')", discipline.Discipline)
+	sql := fmt.Sprintf("INSERT INTO discipline (discipline) VALUES ('%s')", discipline.Discipline)
 	res, err := repo.db.Exec(sql)
 
 	if err != nil {
@@ -74,7 +74,7 @@ func (repo *mySqlCategoryRepository) AddDiscipline(discipline *entity.Discipline
 
 func (repo *mySqlCategoryRepository) UpdateDiscipline(discipline *entity.Discipline) (*entity.Discipline, error) {
 
-	sql := fmt.Sprintf("UPDATE disciplines SET discipline = '%s' WHERE disciplines_id = '%s'", discipline.Discipline, discipline.ID)
+	sql := fmt.Sprintf("UPDATE discipline SET discipline = '%s' WHERE id = '%s'", discipline.Discipline, discipline.ID)
 	_, err := repo.db.Exec(sql)
 
 	if err != nil {
@@ -86,7 +86,7 @@ func (repo *mySqlCategoryRepository) UpdateDiscipline(discipline *entity.Discipl
 
 func (repo *mySqlCategoryRepository) DelDiscipline(id string) error {
 
-	sql := fmt.Sprintf("DELETE FROM disciplines WHERE disciplines_id = '%s'", id)
+	sql := fmt.Sprintf("DELETE FROM discipline WHERE id = '%s'", id)
 	_, err := repo.db.Exec(sql)
 
 	if err != nil {
@@ -98,7 +98,7 @@ func (repo *mySqlCategoryRepository) DelDiscipline(id string) error {
 
 func (repo *mySqlCategoryRepository) AllCategories() ([]entity.Category, error) {
 
-	res, err := repo.db.Query("SELECT categories_id, category FROM categories")
+	res, err := repo.db.Query("SELECT id, category FROM categories")
 
 	if err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func (repo *mySqlCategoryRepository) AllCategories() ([]entity.Category, error) 
 func (repo *mySqlCategoryRepository) Category(id string) (*entity.Category, error) {
 	var cat entity.Category
 
-	if err := repo.db.QueryRow("SELECT categories_id, category FROM categories WHERE categories_id = ?", id).Scan(&cat.ID, &cat.Category); err != nil {
+	if err := repo.db.QueryRow("SELECT id, category FROM categories WHERE id = ?", id).Scan(&cat.ID, &cat.Category); err != nil {
 		return nil, err
 	}
 
@@ -150,7 +150,7 @@ func (repo *mySqlCategoryRepository) AddCategory(category *entity.Category) (*en
 
 func (repo *mySqlCategoryRepository) DelCategory(id string) error {
 
-	sql := fmt.Sprintf("DELETE FROM categories WHERE categories_id = '%s'", id)
+	sql := fmt.Sprintf("DELETE FROM categories WHERE id = '%s'", id)
 	_, err := repo.db.Exec(sql)
 
 	if err != nil {
