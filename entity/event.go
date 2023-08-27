@@ -15,6 +15,7 @@ type Event struct {
 	Agegroups      []AgeGroup      `json:"agegroups"`
 	Genders        []string        `json:"genders"`
 	CategoryGroups []CategoryGroup `json:"category_groups"`
+	ImgURL         string          `json:"image_url"`
 }
 
 // Combines a discipline, category, age group and gender into a single group that will perform at an event.
