@@ -24,7 +24,7 @@ func (repo *mySqlResultsRepository) AllResultsByEventId(id string) ([]entity.Res
 
 	var results []entity.Result
 
-	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, Total FROM results WHERE event_id = '%s'", id)
+	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, Total FROM result WHERE event_id = '%s'", id)
 	res, err := repo.db.Query(sql)
 
 	if err != nil {
@@ -47,7 +47,7 @@ func (repo *mySqlResultsRepository) ResultByResultId(id string) (*entity.Result,
 
 	var result entity.Result
 
-	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, Total FROM results WHERE id='%s'", id)
+	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, Total FROM result WHERE id='%s'", id)
 
 	if err := repo.db.QueryRow(sql).Scan(&result.ID, &result.EventID, &result.Athlete, &result.Club, &result.CategoryGroup, &result.Score); err != nil {
 		return nil, errors.New("event not found")
@@ -60,7 +60,7 @@ func (repo *mySqlResultsRepository) ResultsByAthleteId(id string) ([]entity.Resu
 
 	var results []entity.Result
 
-	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, Total FROM results WHERE athlete_id = '%s'", id)
+	sql := fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, Total FROM result WHERE athlete_id = '%s'", id)
 	res, err := repo.db.Query(sql)
 
 	if err != nil {
@@ -83,7 +83,7 @@ func (repo *mySqlResultsRepository) UserByUserId(id string) (*entity.User, error
 
 	var user entity.User
 
-	sql := fmt.Sprintf("SELECT id, first_name, surname, club_ID, gender FROM users WHERE id='%s'", id)
+	sql := fmt.Sprintf("SELECT id, first_name, surname, club_ID, gender FROM user WHERE id='%s'", id)
 
 	if err := repo.db.QueryRow(sql).Scan(&user.ID, &user.FirstName, &user.Surname, &user.Club, &user.Gender); err != nil {
 		return nil, errors.New("user not found")
@@ -94,7 +94,7 @@ func (repo *mySqlResultsRepository) UserByUserId(id string) (*entity.User, error
 
 func (repo *mySqlResultsRepository) ScoreAthlete(eventId, athleteId int, score *entity.TriScore) (*entity.Result, error) {
 
-	sql := fmt.Sprintf("INSERT INTO results (event_id, athlete_id, club_id, category_id, routine, E1, E2, E3, E4, HD, DD, Tof, Pen, Total) VALUES ('%d', '%d', '1', '1', '1', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f')", eventId, athleteId, score.E1, score.E2, score.E3, score.E4, score.HD, score.DD, score.Tof, score.Pen, score.Total)
+	sql := fmt.Sprintf("INSERT INTO result (event_id, athlete_id, club_id, category_id, routine, E1, E2, E3, E4, HD, DD, Tof, pen, total) VALUES ('%d', '%d', '1', '1', '1', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f', '%.2f')", eventId, athleteId, score.E1, score.E2, score.E3, score.E4, score.HD, score.DD, score.Tof, score.Pen, score.Total)
 	res, err := repo.db.Exec(sql)
 
 	if err != nil {
@@ -109,7 +109,7 @@ func (repo *mySqlResultsRepository) ScoreAthlete(eventId, athleteId int, score *
 
 	var result entity.Result
 
-	sql = fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, E1 FROM results WHERE id='%d'", int(lastId))
+	sql = fmt.Sprintf("SELECT id, event_id, athlete_id, club_id, category_id, E1 FROM result WHERE id='%d'", int(lastId))
 	if err := repo.db.QueryRow(sql).Scan(&result.ID, &result.EventID, &result.Athlete, &result.Club, &result.CategoryGroup, &result.Score); err != nil {
 		return nil, errors.New("result not found")
 	}
