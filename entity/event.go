@@ -5,7 +5,7 @@ import "time"
 // Main struct defining an event (competition) and what groups/categories it will involve.
 type Event struct {
 	ID             string          `json:"id"`
-	Name           string          `json:"name" binding:"required"`
+	Event          string          `json:"event" binding:"required"`
 	StartDate      time.Time       `json:"start_date"`
 	EndDate        time.Time       `json:"end_date"`
 	EntryDeadline  time.Time       `json:"entry_deadline"`
