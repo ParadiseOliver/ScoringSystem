@@ -21,9 +21,9 @@ function getEvents() {
             <img class="card-img-top" src="` + item.image_url + `" alt="Card image cap" style="height:200px;width:auto">
             <div class="card-body">
               <h5 class="card-title">` + item.event + `</h5>
-              <p class="card-text">` + formatDate(item.start_date) + ' to ' + formatDate(item.end_date) + `</p>
+              <p class="card-text">` + formatDate(item.start_date) + ` to ` + formatDate(item.end_date) + `</p>
             </div>
-          </div></div></a>`;
+          </div></a></div>`;
           cnt += 1;  
         });
         $("#eventList").html(block);

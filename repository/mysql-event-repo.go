@@ -70,7 +70,7 @@ func (repo *mySqlEventRepository) EventById(id string) (*entity.Event, error) {
 
 	var event entity.Event
 
-	if err := repo.db.QueryRow("SELECT id, event, start_date, end_date, is_private, img_url FROM event WHERE ID = ?", id).Scan(&event.ID, &event.Event, &event.StartDate, &event.EndDate, &event.IsPrivate, &event.ImgURL); err != nil {
+	if err := repo.db.QueryRow("SELECT id, event, start_date, end_date, is_private, img_url, disciplines FROM event WHERE ID = ?", id).Scan(&event.ID, &event.Event, &event.StartDate, &event.EndDate, &event.IsPrivate, &event.ImgURL, &event.Disciplines); err != nil {
 		return nil, err
 	}
 

@@ -10,7 +10,7 @@ type Event struct {
 	EndDate        time.Time       `json:"end_date"`
 	EntryDeadline  time.Time       `json:"entry_deadline"`
 	IsPrivate      bool            `json:"is_private"`
-	Disciplines    []string        `json:"disciplines"`
+	Disciplines    string          `json:"disciplines"`
 	Categories     []string        `json:"categories"`
 	Agegroups      []AgeGroup      `json:"agegroups"`
 	Genders        []string        `json:"genders"`
