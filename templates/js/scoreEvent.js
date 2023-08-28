@@ -25,12 +25,11 @@ function getEvent(eventID) {
                 block += `<div class="row">`
             }
             block += `<div class="col-sm-4"><div id="` + item.id + `" class="card text-center">
-            <div class="card-body">
-              <h5 class="card-title">` + item.discipline + `</h5>
-              <p class="card-text">FIG Senior men</p>
-              <p class="card-text">FIG Senior men</p>
-            </div>
-          </div></div>`;
+                <div class="card-body">
+                    <h5 class="card-title">` + item.discipline + `</h5>
+                    <p class="card-text">FIG Senior men</p>
+                    <p class="card-text">FIG Senior men</p>
+                </div></div></div>`;
           cnt += 1;
         })
         $("#discipline").html(block);

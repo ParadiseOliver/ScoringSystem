@@ -162,7 +162,7 @@ func (repo *mySqlCategoryRepository) DelCategory(id string) error {
 
 func (repo *mySqlCategoryRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 
-	res, err := repo.db.Query("SELECT agegroup_id, min_age, max_age, group_name FROM agegroups")
+	res, err := repo.db.Query("SELECT id, min_age, max_age, group_name FROM agegroup")
 
 	if err != nil {
 		return nil, err
@@ -185,7 +185,7 @@ func (repo *mySqlCategoryRepository) AllAgeGroups() ([]entity.AgeGroup, error) {
 func (repo *mySqlCategoryRepository) AgeGroup(id string) (*entity.AgeGroup, error) {
 	var age entity.AgeGroup
 
-	if err := repo.db.QueryRow("SELECT agegroup_id, min_age, max_age, group_name FROM agegroups WHERE agegroup_id = ?", id).Scan(&age.ID, &age.MinAge, &age.MaxAge, &age.GroupName); err != nil {
+	if err := repo.db.QueryRow("SELECT id, min_age, max_age, group_name FROM agegroup WHERE id = ?", id).Scan(&age.ID, &age.MinAge, &age.MaxAge, &age.GroupName); err != nil {
 		return nil, err
 	}
 
@@ -194,7 +194,7 @@ func (repo *mySqlCategoryRepository) AgeGroup(id string) (*entity.AgeGroup, erro
 
 func (repo *mySqlCategoryRepository) AddAgeGroup(ageGroup *entity.AgeGroup) (*entity.AgeGroup, error) {
 
-	sql := fmt.Sprintf("INSERT INTO agegroups (min_age, max_age, group_name) VALUES ('%d', '%d', '%s')", ageGroup.MinAge, ageGroup.MaxAge, ageGroup.GroupName)
+	sql := fmt.Sprintf("INSERT INTO agegroup (min_age, max_age, group_name) VALUES ('%d', '%d', '%s')", ageGroup.MinAge, ageGroup.MaxAge, ageGroup.GroupName)
 	res, err := repo.db.Exec(sql)
 
 	if err != nil {
@@ -214,7 +214,7 @@ func (repo *mySqlCategoryRepository) AddAgeGroup(ageGroup *entity.AgeGroup) (*en
 
 func (repo *mySqlCategoryRepository) DelAgeGroup(id string) error {
 
-	sql := fmt.Sprintf("DELETE FROM agegroups WHERE agegroup_id = '%s'", id)
+	sql := fmt.Sprintf("DELETE FROM agegroup WHERE id = '%s'", id)
 	_, err := repo.db.Exec(sql)
 
 	if err != nil {
@@ -226,7 +226,7 @@ func (repo *mySqlCategoryRepository) DelAgeGroup(id string) error {
 
 func (repo *mySqlCategoryRepository) AllGenders() ([]entity.Gender, error) {
 
-	res, err := repo.db.Query("SELECT genders_id, gender FROM genders")
+	res, err := repo.db.Query("SELECT id, gender FROM gender")
 
 	if err != nil {
 		return nil, err
@@ -249,7 +249,7 @@ func (repo *mySqlCategoryRepository) AllGenders() ([]entity.Gender, error) {
 func (repo *mySqlCategoryRepository) Gender(id string) (*entity.Gender, error) {
 	var gender entity.Gender
 
-	if err := repo.db.QueryRow("SELECT genders_id, gender FROM genders WHERE genders_id = ?", id).Scan(&gender.ID, &gender.Gender); err != nil {
+	if err := repo.db.QueryRow("SELECT id, gender FROM gender WHERE id = ?", id).Scan(&gender.ID, &gender.Gender); err != nil {
 		return nil, err
 	}
 
@@ -258,7 +258,7 @@ func (repo *mySqlCategoryRepository) Gender(id string) (*entity.Gender, error) {
 
 func (repo *mySqlCategoryRepository) AddGender(gender *entity.Gender) (*entity.Gender, error) {
 
-	sql := fmt.Sprintf("INSERT INTO genders (gender) VALUES ('%s')", gender.Gender)
+	sql := fmt.Sprintf("INSERT INTO gender (gender) VALUES ('%s')", gender.Gender)
 	res, err := repo.db.Exec(sql)
 
 	if err != nil {
@@ -278,7 +278,7 @@ func (repo *mySqlCategoryRepository) AddGender(gender *entity.Gender) (*entity.G
 
 func (repo *mySqlCategoryRepository) DelGender(id string) error {
 
-	sql := fmt.Sprintf("DELETE FROM genders WHERE genders_id = '%s'", id)
+	sql := fmt.Sprintf("DELETE FROM gender WHERE id = '%s'", id)
 	_, err := repo.db.Exec(sql)
 
 	if err != nil {
@@ -290,7 +290,7 @@ func (repo *mySqlCategoryRepository) DelGender(id string) error {
 
 func (repo *mySqlCategoryRepository) AllCategoryGroups() ([]entity.CategoryGroup, error) {
 
-	res, err := repo.db.Query("SELECT cat_id, discipline_id, category_id, agegroup_id, gender_id FROM category_groups")
+	res, err := repo.db.Query("SELECT id, discipline_id, category_id, agegroup_id, gender_id FROM category_groups")
 
 	if err != nil {
 		return nil, err
@@ -313,7 +313,7 @@ func (repo *mySqlCategoryRepository) AllCategoryGroups() ([]entity.CategoryGroup
 func (repo *mySqlCategoryRepository) CategoryGroup(id string) (*entity.CategoryGroup, error) {
 	var group entity.CategoryGroup
 
-	if err := repo.db.QueryRow("SELECT cat_id, discipline_id, category_id, agegroup_id, gender_id FROM category_groups WHERE cat_id = ?", id).Scan(&group.ID, &group.DisciplineId, &group.CategoryId, &group.AgegroupId, &group.GenderId); err != nil {
+	if err := repo.db.QueryRow("SELECT id, discipline_id, category_id, agegroup_id, gender_id FROM category_groups WHERE id = ?", id).Scan(&group.ID, &group.DisciplineId, &group.CategoryId, &group.AgegroupId, &group.GenderId); err != nil {
 		return nil, err
 	}
 
@@ -342,7 +342,7 @@ func (repo *mySqlCategoryRepository) AddCategoryGroup(catGroup *entity.CategoryG
 
 func (repo *mySqlCategoryRepository) DelCategoryGroup(id string) error {
 
-	sql := fmt.Sprintf("DELETE FROM category_groups WHERE cat_id = '%s'", id)
+	sql := fmt.Sprintf("DELETE FROM category_groups WHERE id = '%s'", id)
 	_, err := repo.db.Exec(sql)
 
 	if err != nil {
